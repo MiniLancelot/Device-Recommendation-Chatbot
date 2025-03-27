@@ -1,0 +1,1 @@
+export const baseUrl = "https://genshin.jmp.blue/characters"; 

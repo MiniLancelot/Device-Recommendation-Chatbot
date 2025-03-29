@@ -10,7 +10,7 @@ const Home = () => {
       <Carousel isDarkMode={isDarkMode} />
       <div className="container mx-auto pb-10 px-3">
         <h1
-          className={`title text-5xl lg:text-9xl font-bold leading-normal bg-gradient-to-r ${
+          className={`title text-5xl lg:text-7xl font-bold leading-normal bg-gradient-to-r ${
             isDarkMode
               ? "dark:from-[#7366e1] dark:to-[#fff075]"
               : "from-[#ff7b75] to-[#e46167]"

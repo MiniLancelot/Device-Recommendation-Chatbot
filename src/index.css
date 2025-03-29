@@ -2,7 +2,9 @@
 
 @theme {
   --color-primary-dark-color: #100e1f;
+  --color-secondary-dark-color: #1d293d;
   --color-primary-white-color: #fff8fa;
+  --color-primary-blue: #7bb1ff;
   --font-poppins: Poppins, sans-serif;
 }
 

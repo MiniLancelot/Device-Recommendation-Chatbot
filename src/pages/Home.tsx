@@ -1,72 +1,214 @@
-import { useOutletContext } from "react-router-dom";
-import Carousel from "../components/common/Carousel/Carousel";
-import { OutletContextProps } from "../types/OutletContext";
-
+import { useRef, useState } from "react";
+import {
+  BiCopy,
+  BiLike,
+  BiDislike,
+  BiSolidLike,
+  BiSolidDislike,
+} from "react-icons/bi";
+import "../styles/Home.css";
 const Home = () => {
-  const { isDarkMode } = useOutletContext<OutletContextProps>();
+  const [userPrompt, setUserPrompt] = useState<string>("");
+  const [listMessages, setListMessages] = useState<
+    { text: string; sender: "user" | "bot"; id: number }[]
+  >([]);
+  const [botTyping, setBotTyping] = useState<boolean>(false);
+  const [ratings, setRatings] = useState<{
+    [key: number]: "like" | "dislike" | null;
+  }>({});
+  const fakeBotMsg =
+    "Lorem Ipsum is simply dummy text of the printing and typesetting industry.";
 
+  const commonPrompts = [
+    "Laptop cho lập trình viên",
+    "Điện thoại chụp ảnh đẹp",
+    "Tai nghe chống ồn",
+    "Máy giặt cửa ngang",
+    "Điện thoại dưới 10 triệu",
+    "iPhone mới nhất",
+    "Tivi Samsung 4K",
+    "Tủ lạnh tiết kiệm điện",
+  ];
+
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setUserPrompt(e.target.value);
+
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "48px";
+      textareaRef.current.style.height = `${Math.min(
+        textareaRef.current.scrollHeight,
+        200
+      )}px`;
+    }
+  };
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+  const handleSendMsg = () => {
+    if (userPrompt.trim() === "") return;
+    setListMessages((prevMessages) => [
+      ...prevMessages,
+      { text: userPrompt, sender: "user", id: prevMessages.length },
+    ]);
+    setUserPrompt("");
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "48px";
+    }
+    setTimeout(() => {
+      scrollToBottom();
+    }, 100);
+    setTimeout(() => {
+      handleBotReply();
+    }, 1000);
+  };
+
+  const handleBotReply = () => {
+    let botReply = "";
+    let index = 0;
+    const messageId = listMessages.length;
+
+    const interval = setInterval(() => {
+      if (index < fakeBotMsg.length) {
+        botReply += fakeBotMsg[index];
+        setListMessages((prev) => {
+          const lastMessage = prev[prev.length - 1];
+
+          if (lastMessage?.sender === "bot") {
+            return [
+              ...prev.slice(0, -1),
+              { text: botReply, sender: "bot", id: messageId },
+            ];
+          } else {
+            return [...prev, { text: botReply, sender: "bot", id: messageId }];
+          }
+        });
+
+        scrollToBottom(); // Cuộn xuống mỗi lần cập nhật tin nhắn bot
+        index++;
+      } else {
+        clearInterval(interval);
+        setBotTyping(false);
+      }
+    }, 30);
+  };
+  const handleRating = (id: number, type: "like" | "dislike") => {
+    if (ratings[id] === undefined) {
+      setRatings((prev) => ({
+        ...prev,
+        [id]: type,
+      }));
+    }
+  };
+  const handlePromptClick = (item: string) => {
+    setUserPrompt(item);
+    setTimeout(() => {
+      textareaRef.current?.focus();
+    }, 0);
+  };
   return (
-    <>
-      <Carousel isDarkMode={isDarkMode} />
-      <div className="container mx-auto pb-10 px-3">
+    <div className="chat-container items-center">
+      {listMessages.length < 1 ? (
         <h1
-          className={`title text-5xl lg:text-9xl font-bold leading-normal bg-gradient-to-r ${
-            isDarkMode
-              ? "dark:from-[#7366e1] dark:to-[#fff075]"
-              : "from-[#ff7b75] to-[#e46167]"
-          } bg-clip-text text-transparent`}
+          className={`title w-fit p-6 text-2xl lg:text-5xl font-bold leading-[1.6]`}
         >
-          Electron Chatbot
+          Khám phá sản phẩm phù hợp <br />
+          trong tích tắc với AI Chatbot!
         </h1>
-        <p
-          className={`desc text-justify text-lg lg:text-2xl ${
-            isDarkMode ? "dark:text-[#fff8fa]" : ""
+      ) : (
+        <div className="list-msg-container">
+          {listMessages.map((msg, index) => (
+            <div key={index} className="w-[60vw]">
+              <div
+                className={`msg ${
+                  msg.sender === "user"
+                    ? "ml-auto max-w-[40vw]"
+                    : "bg-none w-full"
+                }`}
+                style={{
+                  backgroundColor:
+                    msg.sender === "user" ? "#dedede" : "transparent",
+                }}
+              >
+                {msg.text}
+                {msg.sender === "bot" && (
+                  <div className="rating-buttons">
+                    <button className="p-2 cursor-pointer" onClick={() => {}}>
+                      <BiCopy size={20} title="Copy" />
+                    </button>
+                    {(ratings[msg.id] === undefined ||
+                      ratings[msg.id] === "like") && (
+                      <button
+                        className="p-2 cursor-pointer"
+                        onClick={() => handleRating(msg.id, "like")}
+                      >
+                        {ratings[msg.id] === "like" ? (
+                          <BiSolidLike size={20} title="Good response" />
+                        ) : (
+                          <BiLike size={20} title="Good response" />
+                        )}
+                      </button>
+                    )}
+                    {(ratings[msg.id] === undefined ||
+                      ratings[msg.id] === "dislike") && (
+                      <button
+                        className="p-2 cursor-pointer"
+                        onClick={() => handleRating(msg.id, "dislike")}
+                      >
+                        {ratings[msg.id] === "dislike" ? (
+                          <BiSolidDislike size={20} title="Bad response" />
+                        ) : (
+                          <BiDislike size={20} title="Bad response" />
+                        )}
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
+              {botTyping && (
+                <div className="bot-typing">Bot đang trả lời...</div>
+              )}
+            </div>
+          ))}
+          <div ref={messagesEndRef} />
+        </div>
+      )}
+
+      <div className="msg-input-container">
+        <textarea
+          ref={textareaRef}
+          className="w-full outline-none resize-none text-base min-12"
+          value={userPrompt}
+          onChange={handleInputChange}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              handleSendMsg();
+            }
+          }}
+          placeholder={`${
+            listMessages.length < 1
+              ? "Nhập câu hỏi của bạn...Ví dụ: Laptop dưới 20 triệu"
+              : ""
           }`}
-        >
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Culpa velit
-          ad quae vel, veniam quibusdam voluptatem dolore hic voluptatibus ipsa
-          quam repellendus natus reiciendis nulla sunt soluta iure saepe animi,
-          accusantium mollitia, accusamus tempora eaque. Perspiciatis accusamus
-          recusandae officia placeat quisquam vitae, fugit nostrum consectetur
-          corrupti neque architecto harum dolorum? Repellat quod sint eaque
-          aperiam provident reprehenderit quo necessitatibus impedit neque
-          voluptatem saepe officia eveniet beatae voluptatibus quos voluptates
-          fugit, autem obcaecati ut, voluptate delectus ex eius unde. Maiores
-          unde excepturi eveniet corporis quam, optio magni alias culpa
-          blanditiis rerum vel quisquam, ipsam velit recusandae corrupti aperiam
-          labore. Aspernatur, dolor.
-        </p>
-        <p
-          className={`desc text-justify text-lg lg:text-2xl  mt-3 lg:mt-4 ${
-            isDarkMode ? "dark:text-[#fff8fa]" : ""
-          }`}
-        >
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum officia
-          nisi esse nihil itaque quis repellat. Aliquam est provident deserunt
-          dolore rerum, ex quod ipsum delectus obcaecati facilis unde animi
-          architecto quos adipisci reiciendis officia, rem eaque. Asperiores
-          dolorum ad deserunt corporis vel repudiandae unde, praesentium sed,
-          molestiae esse enim quisquam nihil quibusdam incidunt. Molestias quis
-          excepturi cupiditate eos officiis ipsa odit perferendis aliquid
-          inventore, obcaecati dolorum repellat perspiciatis rem id temporibus
-          ea assumenda doloribus libero totam ex. Aliquid, sequi. Odit officiis
-          illo, vel totam incidunt culpa voluptatum ad cupiditate vero
-          praesentium eligendi, nemo rerum velit nisi cumque magnam? Expedita,
-          rerum nostrum cumque nesciunt architecto in adipisci dolorum
-          accusantium suscipit quod consequatur vitae. Ab provident quo facilis
-          quod dolores, rerum inventore explicabo exercitationem voluptatum
-          reiciendis nesciunt corrupti commodi libero tempore, neque mollitia
-          ipsum quos! Totam, sapiente ut. Impedit quia provident distinctio
-          assumenda temporibus corporis fugiat sint, sed qui doloremque,
-          architecto iste sit, itaque eveniet velit aut nulla porro? Libero
-          velit ipsa nisi at rerum odio similique temporibus assumenda sequi
-          alias labore quas ipsum nihil sed, odit ratione eius explicabo?
-          Delectus impedit, deserunt praesentium officiis sunt aperiam quasi
-          doloribus laborum repellat sint nam rerum ullam. A autem nulla veniam
-          corrupti officiis!
-        </p>
+        />
       </div>
-    </>
+      {listMessages.length < 1 && (
+        <div className="common-prompts">
+          {commonPrompts.map((item, index) => (
+            <button
+              key={index}
+              className="prompt-item"
+              onClick={() => handlePromptClick(item)}
+            >
+              {item}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
   );
 };
 

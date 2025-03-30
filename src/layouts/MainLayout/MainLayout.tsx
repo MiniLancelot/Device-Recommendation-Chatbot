@@ -28,11 +28,11 @@ const MainLayout = () => {
   };
   return (
     <div
-      className={`main-container w-full min-h-screen flex flex-col justify-center items-center gap-5 ${
-        isDarkMode ? "dark:bg-primary-dark-color" : "bg-primary-white-color"
-      }`} // Maybe add 'relative' class to the main container
+      className={`main-container bg-amber-500 w-full min-h-screen flex flex-col justify-start items-start gap-5 ${
+        isDarkMode ? "dark:bg-primary-dark-color" : "bg-primary-color"
+      }`}
     >
-      <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
+      <Header />
       <Outlet context={{ isDarkMode, toggleTheme }} />
     </div>
   );

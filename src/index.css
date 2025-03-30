@@ -5,7 +5,10 @@
   --color-secondary-dark-color: #1d293d;
   --color-primary-white-color: #fff8fa;
   --color-primary-blue: #7bb1ff;
+  --color-primary-color: #f5f6fb;
+  --color-primary-grey-color: #757575;
   --font-poppins: Poppins, sans-serif;
+  --font-montserrat: Montserrat, sans-serif;
 }
 
 html {
@@ -16,6 +19,24 @@ html {
   /* margin: 0;
   padding: 0; */
   box-sizing: border-box;
+  /* font-family: "Inter"; */
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: #b3b3b3;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #888;
 }
 
 /* :root {

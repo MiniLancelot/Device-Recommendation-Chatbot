@@ -25,10 +25,9 @@ const Navbar = () => {
   const navLinks = useMemo(
     () => [
       { name: "Trang Chủ", path: "/" },
-      { name: "Điện thoại", path: "/" },
+      { name: "Thiết bị", path: "/devices" },
       { name: "Tin Công nghệ", path: "/" },
       { name: "Test", path: "/test" },
-      { name: "Characters", path: "/characters" },
     ],
     []
   );

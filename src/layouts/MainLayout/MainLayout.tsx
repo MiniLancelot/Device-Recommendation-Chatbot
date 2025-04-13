@@ -3,13 +3,14 @@ import Header from "../../components/common/Header/Header";
 import { motion, AnimatePresence } from "framer-motion";
 import "./styles.css";
 import { useNavStore } from "../../stores/store";
+import Footer from "../../components/common/Footer/Footer";
 
 const MainLayout = () => {
   const { isMobileOpen, closeMobile } = useNavStore();
 
   return (
     <div
-      className="main-container w-full min-h-screen flex flex-col justify-center items-center gap-5 bg-secondary-white-color" // Maybe add 'relative' class to the main container
+      className="main-container w-full min-h-screen flex flex-col items-center bg-secondary-white-color" // Maybe add 'relative' class to the main container
     >
       <AnimatePresence>
         {isMobileOpen && (
@@ -26,6 +27,7 @@ const MainLayout = () => {
 
       <Header />
       <Outlet/>
+      <Footer />
     </div>
   );
 };

@@ -1,10 +1,10 @@
-import { Sun, Moon, List, X } from "@phosphor-icons/react";
+import { List, X } from "@phosphor-icons/react";
 import { Link } from "react-router-dom";
 import { NavbarProps } from "../../../types/Navbar";
 import { useEffect, useRef, useState } from "react";
 import { useNavStore } from "../../../stores/store";
 
-const Navbar = ({ isDarkMode, toggleTheme }: NavbarProps) => {
+const Navbar = ({ isDarkMode }: NavbarProps) => {
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
   const [indicatorStyle, setIndicatorStyle] = useState({ width: 0, left: 0 });
@@ -36,7 +36,7 @@ const Navbar = ({ isDarkMode, toggleTheme }: NavbarProps) => {
       if (isMobileOpen) {
         updateMobileIndicator(activeIndex);
       }
-      
+
       if (window.innerWidth >= 1024 && isMobileOpen) {
         closeMobile();
       }
@@ -58,7 +58,6 @@ const Navbar = ({ isDarkMode, toggleTheme }: NavbarProps) => {
       setIndicatorStyle({ width: item.offsetWidth, left: item.offsetLeft });
     }
   };
-  
 
   const updateMobileIndicator = (index: number) => {
     if (!mobileItemRefs.current[index]) return;

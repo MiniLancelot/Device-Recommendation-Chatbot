@@ -22,7 +22,7 @@ const MobileMenu = ({
   mobileIndicatorStyle,
 }: Props) => (
   <div
-    className={`fixed top-0 right-0 w-2/5 h-[100vh] bg-[#0e0e0e] text-white transition-all duration-500 z-10 mt-14  ${
+    className={`fixed top-0 right-0 w-1/4 h-[100vh] bg-primary-color text-white transition-all duration-500 z-10 mt-16  ${
       isOpen ? "translate-x-0 opacity-100" : "translate-x-full opacity-0"
     } lg:hidden`}
   >

@@ -7,7 +7,7 @@ type LogoProps = {
 const Logo = ({ logoName }: LogoProps) => (
   <Link
     to="/"
-    className="desc text-2xl lg:text-3xl font-bold text-primary-white-color"
+    className="desc text-2xl lg:text-3xl font-bold text-primary-dark-color lg:mr-0 mr-2"
   >
     {logoName}
   </Link>

@@ -84,9 +84,9 @@ const DeviceGallery = () => {
 
   return (
     <>
-      <div className="container mx-auto pt-20 lg:py-30 px-4 text-slate-800">
+      <div className="container mx-auto pt-20 lg:py-30  text-slate-800 lg:px-[180px] px-8">
         <motion.h1
-          className="text-6xl font-bold  text-center py-[8px]"
+          className="text-6xl font-bold  text-center py-[8px] mb-10"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -109,7 +109,7 @@ const DeviceGallery = () => {
 ) : (
   <>
     <motion.div
-      className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-8"
+      className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-6 mt-8"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}

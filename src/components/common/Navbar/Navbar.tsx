@@ -83,52 +83,56 @@ const Navbar = () => {
   return (
     <>
       <nav className="container mx-2 lg:mx-auto lg:px-2 py-3 lg:py-5 flex items-center justify-between z-20 relative">
-        <Logo logoName="Techie" />
-        <ul
-          ref={menuRef}
-          className="hidden lg:flex items-center gap-4 relative"
-        >
-          {navLinks.map((link, index) => (
-            <li key={index}>
-              <NavLinkItem
-                to={link.path}
-                label={link.name}
-                isActive={activeIndex === index}
-                isHovered={hoverIndex === index}
-                onMouseEnter={() => {
-                  setHoverIndex(index);
-                  updateIndicator(index);
-                }}
-                onMouseLeave={() => {
-                  setHoverIndex(null);
-                  updateIndicator(activeIndex);
-                }}
-                onClick={() => setActiveIndex(index)}
-              />
-            </li>
-          ))}
-          <NavIndicator style={indicatorStyle} />
-        </ul>
-        <div className="relative w-90 lg:inline-block lg:-center">
-          <input
-            type="text"
-            placeholder="Tìm kiếm nhanh"
-            className="w-full bg-primary-color rounded-full pl-4 pr-10 py-2 focus:outline-none"
-          />
-          <LuSearch
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500"
-            size={20}
-          />
+        <div className="lg:flex flex-row gap-5">
+          <Logo logoName="Techie"/>
+          <ul
+            ref={menuRef}
+            className="hidden lg:flex items-center gap-4 relative"
+          >
+            {navLinks.map((link, index) => (
+              <li key={index}>
+                <NavLinkItem
+                  to={link.path}
+                  label={link.name}
+                  isActive={activeIndex === index}
+                  isHovered={hoverIndex === index}
+                  onMouseEnter={() => {
+                    setHoverIndex(index);
+                    updateIndicator(index);
+                  }}
+                  onMouseLeave={() => {
+                    setHoverIndex(null);
+                    updateIndicator(activeIndex);
+                  }}
+                  onClick={() => setActiveIndex(index)}
+                />
+              </li>
+            ))}
+            <NavIndicator style={indicatorStyle} />
+          </ul>
         </div>
+
+        <div className="relative w-full sm:w-80 md:w-96 lg:w-90 inline-block">
+  <input
+    type="text"
+    placeholder="Tìm kiếm nhanh"
+    className="w-full bg-primary-color rounded-full pl-4 pr-10 py-2 focus:outline-none text-sm sm:text-base"
+  />
+  <LuSearch
+    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500"
+    size={20}
+  />
+</div>
+
       </nav>
       <div className="lg:hidden flex mr-2">
         <button onClick={toggleMobile}>
           {isMobileOpen ? (
-            <X size={32} className="text-primary-white-color cursor-pointer" />
+            <X size={32} className="text-primary-dark-color cursor-pointer" />
           ) : (
             <List
               size={32}
-              className="text-primary-white-color cursor-pointer"
+              className="text-primary-dark-color cursor-pointer"
             />
           )}
         </button>

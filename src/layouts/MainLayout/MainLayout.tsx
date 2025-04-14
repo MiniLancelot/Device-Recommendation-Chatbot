@@ -10,7 +10,7 @@ const MainLayout = () => {
 
   return (
     <div
-      className="main-container w-full min-h-screen flex flex-col items-center bg-secondary-white-color" // Maybe add 'relative' class to the main container
+      className="main-container w-full min-h-screen flex flex-col items-center bg-primary-color" // Maybe add 'relative' class to the main container
     >
       <AnimatePresence>
         {isMobileOpen && (

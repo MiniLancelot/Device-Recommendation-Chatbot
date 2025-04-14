@@ -14,7 +14,7 @@ const NavLinkItem = ({ to, label, isActive, isHovered, onMouseEnter, onMouseLeav
   <Link
     to={to}
     className={`menu-item desc text-lg lg:text-xl cursor-pointer transition-opacity 
-      ${isActive ? "text-primary-blue" : isHovered ? "text-primary-white-color opacity-100" : "text-primary-white-color opacity-75"}
+      ${isActive ? "text-primary-dark-color" : isHovered ? "text-primary-grey-color opacity-100" : "text-primary-grey-color opacity-75"}
     `}
     onMouseEnter={onMouseEnter}
     onMouseLeave={onMouseLeave}

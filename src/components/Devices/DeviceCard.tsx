@@ -218,27 +218,31 @@ const DeviceCard = ({ device, index }: DeviceCardProps) => {
     <Link
       key={device.name}
       to={`/devices/${device.name}`}
->
-    <motion.div
-      className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-full"
-      style={{ originX: 0, originY: 0 }}
-      initial={{ opacity: 0, scale: 0.8 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.3, delay: index * 0.1 }}
     >
-      <div className="flex-1 overflow-hidden">
-        <img
-          src={  "src/assets/images/iphone-16-pro-max.webp"} //  || character.card
-          alt={device.characterName}
-          className="object-cover w-full h-full"
-        />
-      </div>
-      <div className="p-4">
-        <h3 className="text-lg font-semibold text-gray-800">{device.characterName}</h3>
-        <p className="text-sm text-gray-600">Weapon: {device.weapon}</p>
-        {device.vision && <p className="text-sm text-gray-600">Vision: {device.vision}</p>}
-      </div>
-    </motion.div>
+      <motion.div
+        className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-full"
+        style={{ originX: 0, originY: 0 }}
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.3, delay: index * 0.1 }}
+      >
+        <div className="flex-1 overflow-hidden">
+          <img
+            src={"src/assets/images/iphone-16-pro-max.webp"} //  || character.card
+            alt={device.characterName}
+            className="object-cover w-full h-full"
+          />
+        </div>
+        <div className="p-2 sm:p-3 md:p-4">
+          <h3 className="text-sm sm:text-base md:text-lg font-semibold text-gray-800">
+            {device.characterName}
+          </h3>
+          <p className="text-xs sm:text-sm text-gray-600">Weapon: {device.weapon}</p>
+          {device.vision && (
+            <p className="text-xs sm:text-sm text-gray-600">Vision: {device.vision}</p>
+          )}
+        </div>
+      </motion.div>
     </Link>
   )
 }

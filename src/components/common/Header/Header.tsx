@@ -24,7 +24,7 @@ const Header = () => {
     <header
       className={`
         header fixed flex flex-row justify-between items-center top-0 left-0 right-0 w-full z-50 px-2 
-        bg-primary-dark-color/80 backdrop-blur-sm transition-transform duration-300 ease-in-out ${
+        bg-secondary-white-color transition-transform duration-300 ease-in-out ${
           visible ? "" : "-translate-y-full"
         }`}
     >

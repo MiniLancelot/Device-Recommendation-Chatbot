@@ -25,18 +25,18 @@ const MobileMenuItem = ({
       ref={innerRef}
       className={`menu-item desc text-lg lg:text-xl cursor-pointer transition-opacity ${
         isActive
-          ? "text-primary-blue"
+          ? "text-primary-dark-color"
           : isHovered
-          ? "text-primary-white-color opacity-100"
-          : "text-primary-white-color opacity-75"
+          ? "text-primary-dark-color opacity-100"
+          : "text-primary-dark-color opacity-75"
       }`}
       onClick={onClick}
     >
       {label}
       {isActive && (
         <div className="absolute bottom-0 left-0 flex h-[2px] transition-all duration-300 ease-in-out" style={indicatorStyle}>
-          <div className="bg-blue-400 h-full flex-grow rounded-full" />
-          <div className="bg-blue-400 h-full w-1 ml-1 rounded-full" />
+          <div className="bg-primary-dark-color h-full flex-grow rounded-full" />
+          <div className="bg-primary-dark-color h-full w-1 ml-1 rounded-full" />
         </div>
       )}
     </Link>

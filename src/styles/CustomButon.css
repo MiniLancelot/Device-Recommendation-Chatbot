@@ -17,9 +17,9 @@
     transition: transform 0.2s ease;
   }
   
-  .button-hover:active {
+  /* .button-hover:active {
     transform: scale(0.98);
-  }
+  } */
   
   .button-hover:disabled {
     cursor: not-allowed;

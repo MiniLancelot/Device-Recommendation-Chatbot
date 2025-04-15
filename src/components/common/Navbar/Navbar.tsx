@@ -84,7 +84,7 @@ const Navbar = () => {
     <>
       <nav className="container mx-2 lg:mx-auto lg:px-2 py-3 lg:py-5 flex items-center justify-between z-20 relative">
         <div className="lg:flex flex-row gap-5">
-          <Logo logoName="Techie"/>
+          <Logo />
           <ul
             ref={menuRef}
             className="hidden lg:flex items-center gap-4 relative"
@@ -112,20 +112,20 @@ const Navbar = () => {
           </ul>
         </div>
 
-        <div className="relative w-full sm:w-80 md:w-96 lg:w-90 inline-block">
-  <input
-    type="text"
-    placeholder="Tìm kiếm nhanh"
-    className="w-full bg-primary-color rounded-full pl-4 pr-10 py-2 focus:outline-none text-sm sm:text-base"
-  />
-  <LuSearch
-    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500"
-    size={20}
-  />
-</div>
-
+        <div className="relative w-full sm:w-80 md:w-85 lg:w-90 inline-block">
+          <input
+            type="text"
+            placeholder="Tìm kiếm nhanh"
+            className="w-full bg-primary-color rounded-full pl-4 pr-10 py-2 focus:outline-none text-sm sm:text-base mx-4 lg:mx-0"
+          />
+          <LuSearch
+            className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500"
+            size={20}
+          />
+        </div>
       </nav>
-      <div className="lg:hidden flex mr-2">
+      <div className="lg:hidden flex my-4 ml-4 mr-1 justify-between">
+        <div className="flex-1"></div>
         <button onClick={toggleMobile}>
           {isMobileOpen ? (
             <X size={32} className="text-primary-dark-color cursor-pointer" />

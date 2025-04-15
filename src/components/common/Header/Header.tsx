@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { forwardRef, useEffect, useState } from "react";
 import Navbar from "../Navbar/Navbar";
 
-const Header = () => {
+const Header = forwardRef<HTMLElement>((_, ref) => {
   const [prevScrollPos, setPrevScrollPos] = useState(0);
   const [visible, setVisible] = useState(true);
 
@@ -22,6 +22,7 @@ const Header = () => {
 
   return (
     <header
+      ref={ref}
       className={`
         header fixed flex flex-row justify-between items-center top-0 left-0 right-0 w-full z-50 px-2 
         bg-secondary-white-color transition-transform duration-300 ease-in-out ${
@@ -31,6 +32,6 @@ const Header = () => {
       <Navbar />
     </header>
   );
-};
+});
 
 export default Header;

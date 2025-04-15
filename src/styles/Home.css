@@ -13,64 +13,15 @@
   }
 }
 
-.chat-container {
-  height: calc(100vh - 88px - 20px);
-  width: 100%;
-  padding: 32px 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-.chat-container .title {
-  font-family: "Montserrat", sans-serif;
-}
 .chat-container .list-msg-container {
-  width: 100%;
-  flex: 0.7;
-  flex-grow: 1;
-  overflow-y: auto;
-  padding-bottom: 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 10px;
   animation: slideDown 0.5s ease-out forwards;
 }
-.chat-container .list-msg-container .msg {
-  padding: 10px 20px;
-  width: fit-content;
-  border-radius: 32px;
-  white-space: pre-wrap;
-}
-.chat-container .msg-input-container {
-  width: 60vw;
-  border-radius: 16px;
-  margin-bottom: 20px;
-  padding: 16px;
-  resize: none;
-  max-height: 0.3;
-  background-color: white;
-  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
-  border: none;
-  outline: none;
-  box-sizing: border-box;
-}
-.chat-container .common-prompts {
-  width: 60vw;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-}
-.chat-container .common-prompts .prompt-item {
+/* .chat-container .common-prompts .prompt-item {
   padding: 12px 20px;
   background-color: #ededed;
   border-radius: 32px;
   cursor: pointer;
-}
+} */
 .chat-container .common-prompts .prompt-item:hover {
   transform: scale(1.1);
   background-color: #dcdcdc;

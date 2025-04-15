@@ -143,20 +143,23 @@ const Home = () => {
   };
   return (
     <>
-      <div className="chat-container items-center">
+      <div
+        className="chat-container flex flex-col justify-between lg:justify-center items-center bg-primary-color h-[100vh] w-full
+  pt-20 lg:pt-24"
+      >
         {listMessages.length < 1 ? (
           <h1
-            className={`title w-fit p-6 text-2xl lg:text-5xl font-bold leading-[1.6]`}
+            className={`title w-fit p-6 mb-20 text-xl lg:text-5xl font-bold leading-[1.6] font-montserrat`}
           >
             Khám phá sản phẩm phù hợp <br />
             trong tích tắc với AI Chatbot!
           </h1>
         ) : (
-          <div className="list-msg-container">
+          <div className="list-msg-container w-full flex flex-col justify-start items-center gap-3 flex-[0.7] grow overflow-y-auto pb-[20px]">
             {listMessages.map((msg, index) => (
-              <div key={index} className="w-[60vw]">
+              <div key={index} className="w-[90vw] lg:w-[60vw]">
                 <div
-                  className={`msg ${
+                  className={`msg px-5 py-3 w-fit rounded-3xl whitespace-pre-wrap ${
                     msg.sender === "user"
                       ? "ml-auto max-w-[40vw]"
                       : "bg-none w-full"
@@ -215,7 +218,7 @@ const Home = () => {
           </div>
         )}
 
-        <div className="msg-input-container">
+        <div className="msg-input-container rounded-2xl bg-secondary-white-color p-4 mb-5 shadow-[0_4px_4px_rgba(0,0,0,0.25)] sh w-[90vw] lg:w-[60vw] ">
           <textarea
             ref={textareaRef}
             className="w-full outline-none resize-none text-base min-12"
@@ -237,11 +240,11 @@ const Home = () => {
         </div>
 
         {listMessages.length < 1 && (
-          <div className="common-prompts">
+          <div className="common-prompts hidden lg:flex flex-wrap justify-center items-center gap-4 w-[60vw]">
             {commonPrompts.map((item, index) => (
               <button
                 key={index}
-                className="prompt-item"
+                className="prompt-item px-5 py-3 border-none rounded-full cursor-pointer bg-[#ededed] hover:bg-gray-100"
                 onClick={() => handlePromptClick(item)}
               >
                 {item}

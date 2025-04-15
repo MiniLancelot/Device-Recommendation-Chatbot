@@ -1,6 +1,7 @@
 export const paths = {
     root: "/",
-    characters: "/characters",
-    characterName: "/characters/:characterName",
+    devices: "/devices",
+    // characters: "/characters",
+    characterName: "/devices/:characterName",
     test: "/test",
 };

@@ -1,39 +1,26 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import Header from "../../components/common/Header/Header";
-import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import "./styles.css";
 import { useNavStore } from "../../stores/store";
+import Footer from "../../components/common/Footer/Footer";
 
 const MainLayout = () => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
   const { isMobileOpen, closeMobile } = useNavStore();
-  const html = document.querySelector("html");
+  const location = useLocation();
+  const isFooterRequired = location.pathname !== "/";
 
-  useEffect(() => {
-    if (html) {
-      html.classList.add("-animated");
-      html.classList.toggle("dark");
-    }
-  }, [html, isDarkMode]);
+  // const headerRef = useRef<HTMLElement>(null);
+  // const [headerHeight, setHeaderHeight] = useState(0);
 
-  const toggleTheme = () => {
-    if (document.startViewTransition) {
-      console.log("View Transition API is supported");
-      document.startViewTransition(() => {
-        setIsDarkMode(!isDarkMode);
-      });
-    } else {
-      console.log("View Transition API is not supported");
-      setIsDarkMode(!isDarkMode);
-    }
-  };
-
+  // useLayoutEffect(() => {
+  //   if (headerRef.current) {
+  //     setHeaderHeight(headerRef.current.offsetHeight);
+  //   }
+  // }, []);
   return (
     <div
-      className={`main-container bg-amber-500 w-full min-h-screen flex flex-col justify-start items-start gap-5 ${
-        isDarkMode ? "dark:bg-primary-dark-color" : "bg-primary-color"
-      }`}
+      className="main-container w-full min-h-screen flex flex-col items-center bg-primary-color" // Maybe add 'relative' class to the main container
     >
       <AnimatePresence>
         {isMobileOpen && (
@@ -48,8 +35,13 @@ const MainLayout = () => {
         )}
       </AnimatePresence>
 
-      <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
-      <Outlet context={{ isDarkMode, toggleTheme }} />
+      {/* <Header ref={headerRef} /> */}
+      <Header />
+      {/* <div style={{ paddingTop: headerHeight }} className="w-full"> */}
+      <Outlet />
+      {/* </div> */}
+
+      {isFooterRequired && <Footer />}
     </div>
   );
 };

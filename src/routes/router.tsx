@@ -3,10 +3,10 @@ import { paths } from "./paths";
 import MainLayout from "../layouts/MainLayout/MainLayout";
 import Home from "../pages/Home";
 import CharacterDetail from "../pages/CharacterDetail";
-import Characters from "../pages/Characters";
 import { charactersLoader } from "../loaders/charactersLoader";
 import { characterDetailLoader } from "../loaders/characterLoader";
 import Test from "../pages/Test";
+import DeviceGallery from "../pages/DeviceGallery";
 
 const router = createBrowserRouter([
   {
@@ -18,8 +18,8 @@ const router = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: paths.characters,
-        element: <Characters />,
+        path: paths.devices,
+        element: <DeviceGallery />,
         loader: charactersLoader,
       },
       {

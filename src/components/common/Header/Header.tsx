@@ -1,23 +1,37 @@
+import { forwardRef, useEffect, useState } from "react";
 import Navbar from "../Navbar/Navbar";
 
-interface HeaderProps {
-  isDarkMode: boolean;
-  toggleTheme: () => void;
-}
+const Header = forwardRef<HTMLElement>((_, ref) => {
+  const [prevScrollPos, setPrevScrollPos] = useState(0);
+  const [visible, setVisible] = useState(true);
 
-const Header = ({ isDarkMode, toggleTheme }: HeaderProps) => {
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollPos = window.scrollY;
+
+      const isVisible =
+        prevScrollPos > currentScrollPos || currentScrollPos < 10;
+
+      setPrevScrollPos(currentScrollPos);
+      setVisible(isVisible);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [prevScrollPos]);
+
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all backdrop-blur-md flex flex-row justify-between items-center w-full px-2 ${
-        isDarkMode
-          ? "dark:bg-primary-dark-color/10"
-          // : "bg-primary-white-color/10"
-          : "bg-primary-dark-color/80"
-      }`}
+      ref={ref}
+      className={`
+        header fixed flex flex-row justify-between items-center top-0 left-0 right-0 w-full z-50 px-2 
+        bg-secondary-white-color backdrop-blur-sm transition-transform duration-300 ease-in-out ${
+          visible ? "" : "-translate-y-full"
+        }`}
     >
-      <Navbar isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
+      <Navbar />
     </header>
   );
-};
+});
 
 export default Header;

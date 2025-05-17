@@ -7,6 +7,7 @@ import NavLinkItem from "./NavLinkItem";
 import NavIndicator from "./NavIndicator";
 import MobileMenu from "./MobileMenu";
 import { LuSearch } from "react-icons/lu";
+import DeviceDropdown from "./DeviceDropdown";
 
 const Navbar = () => {
   const [activeIndex, setActiveIndex] = useState<number>(0);
@@ -25,7 +26,6 @@ const Navbar = () => {
   const navLinks = useMemo(
     () => [
       { name: "Trang Chủ", path: "/" },
-      { name: "Thiết bị", path: "/devices" },
       { name: "Tin Công nghệ", path: "/" },
       { name: "Test", path: "/test" },
     ],
@@ -108,6 +108,9 @@ const Navbar = () => {
                 />
               </li>
             ))}
+            <li>
+              <DeviceDropdown />
+            </li>
             <NavIndicator style={indicatorStyle} />
           </ul>
         </div>

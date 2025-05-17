@@ -2,11 +2,11 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { paths } from "./paths";
 import MainLayout from "../layouts/MainLayout/MainLayout";
 import Home from "../pages/Home";
-import CharacterDetail from "../pages/CharacterDetail";
-import { charactersLoader } from "../loaders/charactersLoader";
-import { characterDetailLoader } from "../loaders/characterLoader";
+import DeviceDetail from "../pages/CharacterDetail";
+import { deviceLoader } from "../loaders/deviceLoader";
 import Test from "../pages/Test";
 import DeviceGallery from "../pages/DeviceGallery";
+import { devicesLoader } from "../loaders/charactersLoader";
 
 const router = createBrowserRouter([
   {
@@ -20,12 +20,12 @@ const router = createBrowserRouter([
       {
         path: paths.devices,
         element: <DeviceGallery />,
-        loader: charactersLoader,
+        loader: devicesLoader,
       },
       {
-        path: paths.characterName,
-        element: <CharacterDetail />,
-        loader: characterDetailLoader,
+        path: paths.deviceId,
+        element: <DeviceDetail />,
+        loader: deviceLoader,
       },
       {
         path: paths.test,

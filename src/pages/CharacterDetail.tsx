@@ -1,20 +1,34 @@
-import { useLoaderData, useNavigation, useParams, Link } from "react-router-dom";
-import { baseUrl } from "../constants/baseUrl";
-import { motion } from "framer-motion";
+import { useLoaderData, useNavigation } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 
-type CharacterProps = {
+type DeviceProps = {
+  id: string;
   name: string;
-  vision: string;
-  weapon: string;
-  description?: string;
+  display_name: string;
+  brand: string;
+  category: string;
+  images: string[];
+  prices: {
+    [key: string]: Array<{
+      color: string;
+      price: number;
+    }>;
+  };
+  urls: {
+    [key: string]: string;
+  };
+  specifications: {
+    [key: string]: string | string[];
+  };
+  features: string[];
 };
 
-const CharacterDetail = () => {
-  const { characterName } = useParams<{ characterName: string }>();
-  const character = useLoaderData() as CharacterProps;
+const DeviceDetail = () => {
+  const device = useLoaderData() as DeviceProps;
   const navigation = useNavigation();
-  const [imageLoaded, setImageLoaded] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(0);
+  const [isSpecModalOpen, setIsSpecModalOpen] = useState(false);
 
   // Animation variants
   const containerVariants = {
@@ -63,45 +77,41 @@ const CharacterDetail = () => {
     );
   }
 
-  const getVisionGradient = (vision: string) => {
-    const visionColors: Record<string, string> = {
-      Pyro: "from-red-500 to-orange-500",
-      Hydro: "from-blue-500 to-cyan-400",
-      Anemo: "from-teal-400 to-emerald-500",
-      Electro: "from-purple-600 to-indigo-400",
-      Cryo: "from-blue-300 to-sky-200",
-      Geo: "from-yellow-500 to-amber-400",
-      Dendro: "from-green-500 to-lime-400",
-      Unknown: "from-gray-500 to-slate-400"
-    };
-
-    return visionColors[vision] || visionColors.Unknown;
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND'
+    }).format(price);
   };
 
-  const getWeaponIcon = (weapon: string) => {
-    switch (weapon.toLowerCase()) {
-      case 'sword': return '⚔️';
-      case 'claymore': return '🗡️';
-      case 'polearm': return '🔱';
-      case 'catalyst': return '📘';
-      case 'bow': return '🏹';
-      default: return '🔪';
-    }
+  const getLowestPrice = () => {
+    let lowestPrice = Infinity;
+    Object.values(device.prices).forEach(storePrices => {
+      storePrices.forEach(({ price }) => {
+        if (price < lowestPrice) lowestPrice = price;
+      });
+    });
+    return lowestPrice;
   };
 
-  // Shimmer loading animation
-  const shimmerVariants = {
-    initial: {
-      backgroundPosition: "-500px 0",
-    },
-    animate: {
-      backgroundPosition: "500px 0",
-      transition: {
-        repeat: Infinity,
-        duration: 1.5,
-        ease: "linear",
-      },
-    },
+  // Get important specifications to show initially
+  const getImportantSpecs = () => {
+    const importantKeys = [
+      "Kích thước màn hình",
+      "Công nghệ màn hình",
+      "Độ phân giải màn hình",
+      "Camera sau",
+      "Camera trước",
+      "Chipset",
+      "RAM",
+      "Bộ nhớ trong",
+      "Pin",
+      "Hệ điều hành"
+    ];
+
+    return Object.entries(device.specifications)
+      .filter(([key]) => importantKeys.includes(key))
+      .slice(0, 6); // Show only first 6 important specs
   };
 
   return (
@@ -118,9 +128,9 @@ const CharacterDetail = () => {
         initial="hidden"
         animate="visible"
       >
-        {/* Character Banner/Header */}
+        {/* Device Header */}
         <motion.div 
-          className={`mb-8 rounded-xl overflow-hidden shadow-lg relative bg-gradient-to-r ${getVisionGradient(character.vision)}`}
+          className="mb-8 rounded-xl overflow-hidden shadow-lg relative bg-gradient-to-r from-blue-500 to-purple-500"
           variants={itemVariants}
           whileHover={{ y: -5 }}
           transition={{ duration: 0.3 }}
@@ -144,11 +154,11 @@ const CharacterDetail = () => {
                 transition={{ duration: 0.2 }}
               >
                 <img 
-                  src={`${baseUrl}/${characterName}/icon`} 
-                  alt={character.name}
+                  src={device.images[0]} 
+                  alt={device.display_name}
                   className="w-full h-full object-cover"
                   onError={(e) => {
-                    e.currentTarget.src = "https://via.placeholder.com/150?text=Character";
+                    e.currentTarget.src = "https://via.placeholder.com/150?text=Device";
                   }}
                 />
               </motion.div>
@@ -165,7 +175,7 @@ const CharacterDetail = () => {
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.5, duration: 0.5 }}
               >
-                {character.name}
+                {device.display_name}
               </motion.h1>
               <motion.div 
                 className="flex flex-wrap justify-center md:justify-start gap-4 text-white"
@@ -177,15 +187,22 @@ const CharacterDetail = () => {
                   className="flex items-center gap-2 bg-black bg-opacity-30 rounded-full px-4 py-2"
                   whileHover={{ scale: 1.05, backgroundColor: "rgba(0,0,0,0.5)" }}
                 >
-                  <span className="text-xl">{getWeaponIcon(character.weapon)}</span>
-                  <span>{character.weapon}</span>
+                  <span className="text-xl">🏭</span>
+                  <span>{device.brand}</span>
                 </motion.div>
                 <motion.div 
                   className="flex items-center gap-2 bg-black bg-opacity-30 rounded-full px-4 py-2"
                   whileHover={{ scale: 1.05, backgroundColor: "rgba(0,0,0,0.5)" }}
                 >
-                  <span className="text-xl">✨</span>
-                  <span>{character.vision}</span>
+                  <span className="text-xl">📱</span>
+                  <span>{device.category}</span>
+                </motion.div>
+                <motion.div 
+                  className="flex items-center gap-2 bg-black bg-opacity-30 rounded-full px-4 py-2"
+                  whileHover={{ scale: 1.05, backgroundColor: "rgba(0,0,0,0.5)" }}
+                >
+                  <span className="text-xl">💰</span>
+                  <span>Từ {formatPrice(getLowestPrice())}</span>
                 </motion.div>
               </motion.div>
             </motion.div>
@@ -193,158 +210,180 @@ const CharacterDetail = () => {
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+          {/* Image Gallery */}
           <motion.div 
-            className="lg:col-span-2 flex justify-center"
+            className="lg:col-span-2"
             variants={itemVariants}
           >
             <motion.div 
-              className="rounded-lg overflow-hidden shadow-md bg-white relative"
+              className="bg-white rounded-xl shadow-lg overflow-hidden"
               variants={cardVariants}
               initial="initial"
               whileHover="hover"
             >
-              {/* Image loading shimmer */}
-              {!imageLoaded && (
-                <motion.div
-                  className="absolute inset-0 w-full h-full bg-gradient-to-r from-[#f0f0f0] via-[#fafafa] to-[#f0f0f0] bg-[length:1000px_100%]"
-                  variants={shimmerVariants}
-                  initial="initial"
-                  animate="animate"
-                >
-                  <div className="h-full w-full flex items-center justify-center">
-                    <motion.div 
-                      className="text-[#ff7b75] opacity-90"
-                      animate={{ 
-                        opacity: [0.5, 1, 0.5],
-                        scale: [0.98, 1.02, 0.98],
-                      }}
-                      transition={{ 
-                        repeat: Infinity, 
-                        duration: 1.5,
-                        ease: "easeInOut",
-                      }}
-                    >
-                      Loading...
-                    </motion.div>
-                  </div>
-                </motion.div>
-              )}
-              
-              <motion.img 
-                src={`${baseUrl}/${characterName}/card`} 
-                alt={character.name} 
-                className="w-full h-auto object-cover"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: imageLoaded ? 1 : 0 }}
-                transition={{ duration: 0.5 }}
-                onLoad={() => setImageLoaded(true)}
-                onError={(e) => {
-                  e.currentTarget.src = "https://via.placeholder.com/300x500?text=Character+Card";
-                  setImageLoaded(true);
-                }}
-              />
+              <div className="relative aspect-square">
+                <img 
+                  src={device.images[selectedImage]} 
+                  alt={device.display_name}
+                  className="w-full h-full object-contain p-4"
+                />
+              </div>
+              <div className="p-4 grid grid-cols-5 gap-2">
+                {device.images.map((image, index) => (
+                  <motion.button
+                    key={index}
+                    className={`aspect-square rounded-lg overflow-hidden border-2 ${
+                      selectedImage === index ? 'border-blue-500' : 'border-gray-200'
+                    }`}
+                    onClick={() => setSelectedImage(index)}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <img 
+                      src={image} 
+                      alt={`${device.display_name} - ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </motion.button>
+                ))}
+              </div>
             </motion.div>
           </motion.div>
 
+          {/* Device Information */}
           <motion.div 
-            className="lg:col-span-3"
+            className="lg:col-span-3 space-y-8"
             variants={itemVariants}
           >
+            {/* Prices Section */}
             <motion.div 
-              className="rounded-lg shadow-md p-6 bg-white"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6, duration: 0.5 }}
+              className="bg-white rounded-xl shadow-lg p-6"
+              variants={cardVariants}
+              initial="initial"
+              whileHover="hover"
             >
-              <motion.h2 
-                className="text-2xl font-bold mb-4 bg-gradient-to-r from-[#ff7b75] to-[#e46167] bg-clip-text text-transparent"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.7, duration: 0.5 }}
-              >
-                Character Details
-              </motion.h2>
-
-              <motion.div 
-                className="space-y-4"
-                variants={containerVariants}
-                initial="hidden"
-                animate="visible"
-              >
-                <motion.div variants={itemVariants}>
-                  <h3 className="text-lg font-semibold mb-1 text-gray-700">Vision</h3>
-                  <motion.p 
-                    className="relative pl-3 before:content-[''] before:absolute before:w-1 before:h-full before:bg-gradient-to-b before:from-[#ff7b75] before:to-[#e46167] before:left-0 before:rounded-full"
-                    whileHover={{ x: 5 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                  >
-                    {character.vision}
-                  </motion.p>
-                </motion.div>
-                
-                <motion.div variants={itemVariants}>
-                  <h3 className="text-lg font-semibold mb-1 text-gray-700">Weapon</h3>
-                  <motion.p 
-                    className="relative pl-3 before:content-[''] before:absolute before:w-1 before:h-full before:bg-gradient-to-b before:from-[#ff7b75] before:to-[#e46167] before:left-0 before:rounded-full"
-                    whileHover={{ x: 5 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                  >
-                    {character.weapon}
-                  </motion.p>
-                </motion.div>
-                
-                <motion.div variants={itemVariants}>
-                  <h3 className="text-lg font-semibold mb-1 text-gray-700">Description</h3>
-                  {character.description ? (
-                    <motion.p 
-                      className="text-justify relative pl-3 before:content-[''] before:absolute before:w-1 before:h-full before:bg-gradient-to-b before:from-[#ff7b75] before:to-[#e46167] before:left-0 before:rounded-full"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.9, duration: 0.5 }}
+              <h2 className="text-2xl font-bold mb-4">Giá tại các cửa hàng</h2>
+              <div className="space-y-4">
+                {Object.entries(device.prices).map(([store, prices]) => (
+                  <div key={store} className="border-b last:border-b-0 pb-4 last:pb-0">
+                    <h3 className="font-semibold text-lg mb-2 capitalize">{store}</h3>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                      {prices.map(({ color, price }, index) => (
+                        <div key={index} className="flex justify-between items-center bg-gray-50 p-2 rounded">
+                          <span className="text-sm">{color}</span>
+                          <span className="font-medium">{formatPrice(price)}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <a 
+                      href={device.urls[store]} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="inline-block mt-2 text-blue-500 hover:text-blue-600"
                     >
-                      {character.description}
-                    </motion.p>
-                  ) : (
-                    <motion.p 
-                      className="text-justify italic relative pl-3 before:content-[''] before:absolute before:w-1 before:h-full before:bg-gradient-to-b before:from-[#ff7b75] before:to-[#e46167] before:left-0 before:rounded-full"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.9, duration: 0.5 }}
-                    >
-                      A mysterious character from the world of Teyvat. Their background and abilities are shrouded in mystery, waiting to be discovered.
-                    </motion.p>
-                  )}
-                </motion.div>
-              </motion.div>
+                      Xem tại {store} →
+                    </a>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
 
-              {/* Back Button */}
-              <motion.div 
-                className="mt-8"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1, duration: 0.5 }}
-              >
-                <motion.div
+            {/* Specifications Section */}
+            <motion.div 
+              className="bg-white rounded-xl shadow-lg p-8"
+              variants={cardVariants}
+              initial="initial"
+              whileHover="hover"
+            >
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-3xl font-bold text-gray-800">Thông số kỹ thuật</h2>
+                <motion.button
+                  onClick={() => setIsSpecModalOpen(true)}
+                  className="px-6 py-2.5 text-sm font-medium text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  <Link 
-                    to={`/devices`}
-                    className="px-4 py-2 rounded-lg flex items-center gap-2 transition-colors bg-gradient-to-r from-[#ff7b75] to-[#e46167] text-white shadow-md"
-                  >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                    </svg>
-                    Back to Characters
-                  </Link>
-                </motion.div>
-              </motion.div>
+                  Xem tất cả
+                </motion.button>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {getImportantSpecs().map(([key, value]) => (
+                  <div key={key} className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors">
+                    <h3 className="font-semibold text-gray-700 mb-2 text-lg">{key}</h3>
+                    <p className="text-gray-800 text-base">
+                      {Array.isArray(value) ? value.join(', ') : value}
+                    </p>
+                  </div>
+                ))}
+              </div>
             </motion.div>
+
+            {/* Features Section */}
+            {/* <motion.div 
+              className="bg-white rounded-xl shadow-lg p-6"
+              variants={cardVariants}
+              initial="initial"
+              whileHover="hover"
+            >
+              <h2 className="text-2xl font-bold mb-4">Tính năng nổi bật</h2>
+              <ul className="list-disc list-inside space-y-2">
+                {device.features.map((feature, index) => (
+                  <li key={index} className="text-gray-700">{feature}</li>
+                ))}
+              </ul>
+            </motion.div> */}
           </motion.div>
         </div>
       </motion.div>
+
+      {/* Specifications Modal */}
+      <AnimatePresence>
+        {isSpecModalOpen && (
+          <motion.div
+            className="fixed inset-0 backdrop-blur-sm bg-white/30 z-50 flex items-center justify-center p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsSpecModalOpen(false)}
+          >
+            <motion.div
+              className="bg-white rounded-xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="p-6">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-2xl font-bold">Thông số kỹ thuật chi tiết</h2>
+                  <motion.button
+                    onClick={() => setIsSpecModalOpen(false)}
+                    className="text-gray-500 hover:text-gray-700"
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                  >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </motion.button>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {Object.entries(device.specifications).map(([key, value]) => (
+                    <div key={key} className="border-b last:border-b-0 pb-4">
+                      <h3 className="font-medium text-gray-600 mb-2">{key}</h3>
+                      <p className="text-gray-800">
+                        {Array.isArray(value) ? value.join(', ') : value}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 };
 
-export default CharacterDetail;
+export default DeviceDetail;

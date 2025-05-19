@@ -5,8 +5,10 @@ import {
   BiSolidLike,
   BiSolidDislike,
 } from "react-icons/bi";
+import { LuArrowUp } from "react-icons/lu";
 import { useRef, useState } from "react";
 import "../styles/Home.css";
+import { askChatbot } from "../services/chatbotService";
 
 const Home = () => {
   const [userPrompt, setUserPrompt] = useState<string>("");
@@ -21,8 +23,8 @@ const Home = () => {
     [key: number]: "like" | "dislike" | null;
   }>({});
 
-  const fakeBotMsg =
-    "Lorem Ipsum is simply dummy text of the printing and typesetting industry.";
+  // const fakeBotMsg =
+  //   "Lorem Ipsum is simply dummy text of the printing and typesetting industry.";
 
   const commonPrompts = [
     "Laptop cho lập trình viên",
@@ -64,14 +66,15 @@ const Home = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const handleSendMsg = () => {
+  const handleSendMsg = async () => {
     if (userPrompt.trim() === "") return;
 
-    setListMessages((prevMessages) => [
-      ...prevMessages,
-
-      { text: userPrompt, sender: "user", id: prevMessages.length },
-    ]);
+    const userMsg = {
+      text: userPrompt,
+      sender: "user" as const,
+      id: listMessages.length,
+    };
+    setListMessages((prevMessages) => [...prevMessages, userMsg]);
 
     setUserPrompt("");
 
@@ -79,50 +82,64 @@ const Home = () => {
       textareaRef.current.style.height = "48px";
     }
 
-    setTimeout(() => {
+    scrollToBottom();
+
+    setBotTyping(true);
+
+    try {
+      const botReply = await askChatbot(userPrompt);
+
+      const botMsg = {
+        text: botReply,
+        sender: "bot" as const,
+        id: userMsg.id + 1,
+      };
+
+      setListMessages((prevMessages) => [...prevMessages, botMsg]);
+
       scrollToBottom();
-    }, 100);
-
-    setTimeout(() => {
-      handleBotReply();
-    }, 1000);
+    } catch (error) {
+      console.error("Lỗi khi gọi chatbot:", error);
+    } finally {
+      setBotTyping(false);
+    }
   };
 
-  const handleBotReply = () => {
-    let botReply = "";
+  // const handleBotReply = () => {
+  //   let botReply = "";
 
-    let index = 0;
+  //   let index = 0;
 
-    const messageId = listMessages.length;
+  //   const messageId = listMessages.length;
 
-    const interval = setInterval(() => {
-      if (index < fakeBotMsg.length) {
-        botReply += fakeBotMsg[index];
+  //   const interval = setInterval(() => {
+  //     if (index < fakeBotMsg.length) {
+  //       botReply += fakeBotMsg[index];
 
-        setListMessages((prev) => {
-          const lastMessage = prev[prev.length - 1];
+  //       setListMessages((prev) => {
+  //         const lastMessage = prev[prev.length - 1];
 
-          if (lastMessage?.sender === "bot") {
-            return [
-              ...prev.slice(0, -1),
+  //         if (lastMessage?.sender === "bot") {
+  //           return [
+  //             ...prev.slice(0, -1),
 
-              { text: botReply, sender: "bot", id: messageId },
-            ];
-          } else {
-            return [...prev, { text: botReply, sender: "bot", id: messageId }];
-          }
-        });
+  //             { text: botReply, sender: "bot", id: messageId },
+  //           ];
+  //         } else {
+  //           return [...prev, { text: botReply, sender: "bot", id: messageId }];
+  //         }
+  //       });
 
-        scrollToBottom(); // Cuộn xuống mỗi lần cập nhật tin nhắn bot
+  //       scrollToBottom(); // Cuộn xuống mỗi lần cập nhật tin nhắn bot
 
-        index++;
-      } else {
-        clearInterval(interval);
+  //       index++;
+  //     } else {
+  //       clearInterval(interval);
 
-        setBotTyping(false);
-      }
-    }, 30);
-  };
+  //       setBotTyping(false);
+  //     }
+  //   }, 30);
+  // };
 
   const handleRating = (id: number, type: "like" | "dislike") => {
     if (ratings[id] === undefined) {
@@ -207,18 +224,23 @@ const Home = () => {
                     </div>
                   )}
                 </div>
-
-                {botTyping && (
-                  <div className="bot-typing">Bot đang trả lời...</div>
-                )}
               </div>
             ))}
-
+            {botTyping && (
+              <div className="bot-typing w-[90vw] lg:w-[60vw] px-5 flex items-end gap-2 text-gray-500">
+                <span>Bot đang trả lời</span>
+                <span className="typing-dots flex gap-1">
+                  <span className="dot">.</span>
+                  <span className="dot">.</span>
+                  <span className="dot">.</span>
+                </span>
+              </div>
+            )}
             <div ref={messagesEndRef} />
           </div>
         )}
 
-        <div className="msg-input-container rounded-2xl bg-secondary-white-color p-4 mb-5 shadow-[0_4px_4px_rgba(0,0,0,0.25)] sh w-[90vw] lg:w-[60vw] ">
+        <div className="msg-input-container flex flex-col justify-end gap-2 rounded-2xl bg-secondary-white-color p-4 mb-5 shadow-[0_4px_4px_rgba(0,0,0,0.25)] sh w-[90vw] lg:w-[60vw] ">
           <textarea
             ref={textareaRef}
             className="w-full outline-none resize-none text-base min-12"
@@ -237,6 +259,12 @@ const Home = () => {
                 : ""
             }`}
           />
+          <button
+            onClick={handleSendMsg}
+            className=" ml-auto bg-black text-white p-2 rounded-full hover:bg-gray-800 transition cursor-pointer"
+          >
+            <LuArrowUp size={24} />
+          </button>
         </div>
 
         {listMessages.length < 1 && (

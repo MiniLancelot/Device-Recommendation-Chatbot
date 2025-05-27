@@ -1,36 +1,30 @@
 import { baseUrl } from "../constants/baseUrl";
 import axios from "axios";
 
-export const charactersLoader = async () => {
+export const devicesLoader = async ({ request }: { request: Request }) => {
   try {
-    const response = await axios.get(baseUrl);    
-    const characterNames = await response.data;
-    console.log(characterNames)
-    
-    const characterDetailsPromises = characterNames.map(async (name: string) => {
-      try {
-        const detailResponse = await axios.get(`${baseUrl}/${name}`);
-        if (detailResponse.status !== 200) {
-          return { name, weapon: "Unknown", icon: "" };
-        }
-        const details = await detailResponse.data
-        return {
-          name,
-          characterName: details.name || "Unknown",
-          weapon: details.weapon || "Unknown",
-          vision: details.vision || "Unknown",
-          card: `${baseUrl}/${name}/card` // Add icon URL
-        };
-      } catch (error) {
-        console.error(`Error fetching details for ${name}:`, error);
-        return { name, weapon: "Unknown", icon: "" };
-      }
-    });
-    
-    const charactersWithDetails = await Promise.all(characterDetailsPromises);
-    return charactersWithDetails;
-    
+    const url = new URL(request.url);
+    const page = url.searchParams.get("page") || "1";
+    const brand = url.searchParams.get("brand") || "";
+    const category = url.searchParams.get("category") || "";
+    const sort = url.searchParams.get("sort") || "";
+
+    const response = await axios.get(
+      `${baseUrl}?page=${page}&page_size=20${brand ? `&brand=${brand}` : ""}${
+        category ? `&category=${category}` : ""
+      }${sort ? `&sort=${sort}` : ""}`
+    );
+    return response.data;
   } catch (error) {
-    console.error("Error in charactersLoader:", error);
+    console.error("Error in devicesLoader:", error);
+    return {
+      devices: [],
+      pagination: {
+        current_page: 1,
+        total_pages: 1,
+        total_items: 0,
+        page_size: 20
+      }
+    };
   }
 };

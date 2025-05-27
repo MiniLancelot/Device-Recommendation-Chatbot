@@ -1,18 +1,18 @@
 import { motion } from "framer-motion";
 
 type DeviceFiltersProps = {
-  weaponTypes: string[]; // Sau này đổi thành sort thiết bị
-  visionTypes: string[]; // Sau này đổi thành sort 'Sắp xếp theo'
-  currentWeapon: string;
-  currentVision: string;
+  brandTypes: string[];
+  categoryTypes: string[];
+  currentBrand: string;
+  currentCategory: string;
   onFilterChange: (filterType: string, value: string) => void;
 };
 
 const DeviceFilter = ({
-  weaponTypes,
-  visionTypes,
-  currentWeapon,
-  currentVision,
+  brandTypes,
+  categoryTypes,
+  currentBrand,
+  currentCategory,
   onFilterChange,
 }: DeviceFiltersProps) => {
   return (
@@ -26,58 +26,58 @@ const DeviceFilter = ({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <h3 className="text-sm font-medium mb-2">Sắp xếp theo</h3>
+          <h3 className="text-sm font-medium mb-2">Thương hiệu</h3>
           <div className="flex flex-wrap gap-2">
             <button
               className={`px-3 py-1 rounded-full text-sm ${
-                currentWeapon === ""
+                currentBrand === ""
                   ? "bg-primary-blue text-white"
                   : "bg-gray-100 hover:bg-gray-200"
               }`}
-              onClick={() => onFilterChange("weapon", "")}
+              onClick={() => onFilterChange("brand", "")}
             >
-              All
+              Tất cả
             </button>
-            {weaponTypes.map((weapon) => (
+            {brandTypes.map((brand) => (
               <button
-                key={weapon}
+                key={brand}
                 className={`px-3 py-1 rounded-full text-sm ${
-                  currentWeapon === weapon
+                  currentBrand === brand
                     ? "bg-primary-blue text-white"
                     : "bg-gray-100 hover:bg-gray-200"
                 }`}
-                onClick={() => onFilterChange("weapon", weapon)}
+                onClick={() => onFilterChange("brand", brand)}
               >
-                {weapon}
+                {brand}
               </button>
             ))}
           </div>
         </div>
 
         <div>
-          <h3 className="text-sm font-medium mb-2">Chọn theo tiêu chí</h3>
+          <h3 className="text-sm font-medium mb-2">Danh mục</h3>
           <div className="flex flex-wrap gap-2">
             <button
               className={`px-3 py-1 rounded-full text-sm ${
-                currentVision === ""
+                currentCategory === ""
                   ? "bg-primary-blue text-white"
                   : "bg-gray-100 hover:bg-gray-200"
               }`}
-              onClick={() => onFilterChange("vision", "")}
+              onClick={() => onFilterChange("category", "")}
             >
-              All
+              Tất cả
             </button>
-            {visionTypes.map((vision) => (
+            {categoryTypes.map((category) => (
               <button
-                key={vision}
+                key={category}
                 className={`px-3 py-1 rounded-full text-sm ${
-                  currentVision === vision
+                  currentCategory === category
                     ? "bg-primary-blue text-white"
                     : "bg-gray-100 hover:bg-gray-200"
                 }`}
-                onClick={() => onFilterChange("vision", vision)}
+                onClick={() => onFilterChange("category", category)}
               >
-                {vision}
+                {category}
               </button>
             ))}
           </div>

@@ -23,32 +23,16 @@ const Navbar = () => {
   const { isMobileOpen, toggleMobile, closeMobile } = useNavStore();
   const location = useLocation();
 
-  const navLinks = useMemo(
-    () => [
-      { name: "Trang Chủ", path: "/" },
-      { name: "Tin Công nghệ", path: "/" },
-      { name: "Test", path: "/test" },
-    ],
-    []
-  );
+  const navLinks = useMemo(() => [{ name: "Trang Chủ", path: "/" }], []);
 
   useEffect(() => {
     const currentPath = location.pathname;
-    const exactMatchIndex = navLinks.findIndex(
-      (link) => link.path === currentPath
-    );
-    if (exactMatchIndex !== -1) return setActiveIndex(exactMatchIndex);
-
-    for (let i = 0; i < navLinks.length; i++) {
-      if (
-        navLinks[i].path !== "/" &&
-        currentPath.startsWith(navLinks[i].path)
-      ) {
-        return setActiveIndex(i);
-      }
+    if (currentPath === "/") {
+      setActiveIndex(0);
+    } else {
+      setActiveIndex(-1);
     }
-    setActiveIndex(0);
-  }, [location.pathname, navLinks]);
+  }, [location.pathname]);
 
   useEffect(() => {
     const update = () => {
@@ -62,6 +46,12 @@ const Navbar = () => {
   }, [activeIndex, isMobileOpen, closeMobile]);
 
   const updateIndicator = (index: number) => {
+    if (index === -1) {
+      // Ẩn indicator nếu không có item active
+      setIndicatorStyle({ width: 0, left: 0 });
+      return;
+    }
+
     const items =
       menuRef.current?.querySelectorAll<HTMLDivElement>(".menu-item");
     if (items?.[index])
@@ -72,6 +62,11 @@ const Navbar = () => {
   };
 
   const updateMobileIndicator = (index: number) => {
+    if (index === -1) {
+      setMobileIndicatorStyle({ width: 0, left: 0 });
+      return;
+    }
+
     const item = mobileItemRefs.current[index];
     if (item)
       setMobileIndicatorStyle({
@@ -94,7 +89,6 @@ const Navbar = () => {
                 <NavLinkItem
                   to={link.path}
                   label={link.name}
-                  isActive={activeIndex === index}
                   isHovered={hoverIndex === index}
                   onMouseEnter={() => {
                     setHoverIndex(index);

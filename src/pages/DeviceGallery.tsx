@@ -34,30 +34,50 @@ const DeviceGallery = () => {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [isBrandDropdownOpen, setIsBrandDropdownOpen] = useState(false);
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
-  const categoryFromUrl = searchParams.get('category');
-  const currentSort = searchParams.get('sort') || '';
+  const categoryFromUrl = searchParams.get("category");
+  const currentSort = searchParams.get("sort") || "";
+  const [pageTitle, setPageTitle] = useState("Danh sách sản phẩm");
+  const deviceCategories = [
+    { name: "điện thoại", path: "/devices?category=dien-thoai" },
+    { name: "laptop", path: "/devices?category=laptop" },
+    { name: "màn hình", path: "/devices?category=man-hinh" },
+    { name: "máy tính bảng", path: "/devices?category=may-tinh-bang" },
+    { name: "máy tính để bàn", path: "/devices?category=pc" },
+  ];
 
   const sortOptions = [
-    { label: 'Mặc định', value: '' },
-    { label: 'Giá tăng dần', value: 'price_asc' },
-    { label: 'Giá giảm dần', value: 'price_desc' },
+    { label: "Mặc định", value: "" },
+    { label: "Giá tăng dần", value: "price_asc" },
+    { label: "Giá giảm dần", value: "price_desc" },
   ];
 
   useEffect(() => {
     const fetchBrands = async () => {
       try {
-        const response = await fetch(`http://127.0.0.1:8000/brands?category=${categoryFromUrl || ''}`);
+        const response = await fetch(
+          `http://127.0.0.1:8000/brands?category=${categoryFromUrl || ""}`
+        );
         if (response.ok) {
           const data = await response.json();
           setBrands(data.brands || []);
         }
       } catch (error) {
-        console.error('Error fetching brands:', error);
+        console.error("Error fetching brands:", error);
         setBrands([]);
       }
     };
 
     fetchBrands();
+  }, [categoryFromUrl]);
+  useEffect(() => {
+    const selectedCategory = deviceCategories.find((item) =>
+      item.path.includes(`category=${categoryFromUrl}`)
+    );
+    const newTitle = selectedCategory
+      ? `Danh sách ${selectedCategory.name}`
+      : "Danh sách sản phẩm";
+
+    setPageTitle(newTitle);
   }, [categoryFromUrl]);
 
   const handleFilterChange = (type: string, value: string) => {
@@ -126,7 +146,7 @@ const DeviceGallery = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          Danh sách thiết bị
+          {pageTitle}
         </motion.h1>
 
         <div className="mb-8 p-4 bg-white rounded-lg shadow-md">
@@ -138,7 +158,10 @@ const DeviceGallery = () => {
                   className="flex items-center justify-between w-full px-4 py-2 text-left bg-white border rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-blue"
                   onClick={() => setIsBrandDropdownOpen(!isBrandDropdownOpen)}
                 >
-                  <span>{brandFilter.charAt(0).toUpperCase() + brandFilter.slice(1) || "Tất cả"}</span>
+                  <span>
+                    {brandFilter.charAt(0).toUpperCase() +
+                      brandFilter.slice(1) || "Tất cả"}
+                  </span>
                   <CaretDown size={16} weight="bold" />
                 </button>
 
@@ -171,7 +194,10 @@ const DeviceGallery = () => {
                   className="flex items-center justify-between w-full px-4 py-2 text-left bg-white border rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-blue"
                   onClick={() => setIsSortDropdownOpen(!isSortDropdownOpen)}
                 >
-                  <span>{sortOptions.find(opt => opt.value === currentSort)?.label || 'Mặc định'}</span>
+                  <span>
+                    {sortOptions.find((opt) => opt.value === currentSort)
+                      ?.label || "Mặc định"}
+                  </span>
                   <CaretDown size={16} weight="bold" />
                 </button>
 
@@ -192,7 +218,7 @@ const DeviceGallery = () => {
             </div>
           </div>
         </div>
-    
+
         {navigation.state !== "idle" ? (
           <div className="flex justify-center items-center py-20">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#ff7b75]"></div>

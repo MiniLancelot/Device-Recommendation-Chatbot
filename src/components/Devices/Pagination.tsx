@@ -66,7 +66,7 @@ const Pagination = ({
           className={`p-2 rounded-md ${
             currentPage === 1
               ? "text-gray-400 cursor-not-allowed"
-              : "text-gray-700 hover:bg-gray-100"
+              : "text-gray-700 hover:bg-gray-100 cursor-pointer"
           }`}
           aria-label="Previous page"
         >
@@ -82,7 +82,7 @@ const Pagination = ({
             <button
               key={page}
               onClick={() => onPageChange(page)}
-              className={`px-3 py-1 rounded-md ${
+              className={`px-3 py-1 rounded-md cursor-pointer ${
                 currentPage === page
                   ? "bg-primary-blue text-white"
                   : "text-gray-700 hover:bg-gray-100"
@@ -99,7 +99,7 @@ const Pagination = ({
           className={`p-2 rounded-md ${
             currentPage === totalPages
               ? "text-gray-400 cursor-not-allowed"
-              : "text-gray-700 hover:bg-gray-100"
+              : "text-gray-700 hover:bg-gray-100 cursor-pointer "
           }`}
           aria-label="Next page"
         >

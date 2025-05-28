@@ -1,36 +1,38 @@
-import { useState, useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { CaretDown } from '@phosphor-icons/react';
+import { useState, useRef } from "react";
+import { Link } from "react-router-dom";
+import { CaretDown } from "@phosphor-icons/react";
+import classNames from "classnames";
 
 const DeviceDropdown = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const deviceCategories = [
-    { name: 'Điện thoại', path: '/devices?category=dien-thoai' },
-    { name: 'Laptop', path: '/devices?category=laptop' },
-    { name: 'Màn hình', path: '/devices?category=man-hinh' },
-    { name: 'Máy tính bảng', path: '/devices?category=may-tinh-bang' },
-    { name: 'PC', path: '/devices?category=pc' },
+    { name: "Điện thoại", path: "/devices?category=dien-thoai" },
+    { name: "Laptop", path: "/devices?category=laptop" },
+    { name: "Màn hình", path: "/devices?category=man-hinh" },
+    { name: "Máy tính bảng", path: "/devices?category=may-tinh-bang" },
+    { name: "PC", path: "/devices?category=pc" },
   ];
+  const handleMouseEnter = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    setIsOpen(true);
+  };
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  const handleMouseLeave = () => {
+    timeoutRef.current = setTimeout(() => {
+      setIsOpen(false);
+    }, 300);
+  };
 
   return (
-    <div className="relative" ref={dropdownRef}>
-      <button
-        className="flex items-center gap-1 px-4 py-2 text-lg hover:text-primary-blue transition-colors"
-        onClick={() => setIsOpen(!isOpen)}
-      >
+    <div
+      className="relative"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      <button className="flex items-center gap-1 px-4 py-2 text-lg lg:text-xl font-semibold cursor-pointer hover:text-primary-blue transition-colors">
         Thiết bị
         <CaretDown size={16} weight="bold" />
       </button>
@@ -41,7 +43,10 @@ const DeviceDropdown = () => {
             <Link
               key={category.path}
               to={category.path}
-              className="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors"
+              className={classNames(
+                "block px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors"
+                // currentPath === category.path ? "bg-gray-200" : ""
+              )}
               onClick={() => setIsOpen(false)}
             >
               {category.name}
@@ -53,4 +58,4 @@ const DeviceDropdown = () => {
   );
 };
 
-export default DeviceDropdown; 
+export default DeviceDropdown;

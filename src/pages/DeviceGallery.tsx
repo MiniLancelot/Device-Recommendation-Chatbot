@@ -9,6 +9,7 @@ import Pagination from "../components/Devices/Pagination";
 import { DeviceBasicInfoProps } from "../types/DeviceBasicInfo";
 import { useState, useEffect } from "react";
 import { CaretDown } from "@phosphor-icons/react";
+import HeroCarousel from "../components/common/Carousel/Carousel";
 
 interface DeviceResponse {
   devices: DeviceBasicInfoProps[];
@@ -78,7 +79,7 @@ const DeviceGallery = () => {
       : "Danh sách sản phẩm";
 
     setPageTitle(newTitle);
-  }, [categoryFromUrl]);
+  }, [categoryFromUrl, deviceCategories]);
 
   const handleFilterChange = (type: string, value: string) => {
     const newParams = new URLSearchParams(searchParams);
@@ -140,6 +141,7 @@ const DeviceGallery = () => {
   return (
     <>
       <div className="container mx-auto pt-20 lg:py-30  text-slate-800 lg:px-[180px] px-8">
+      <HeroCarousel category={categoryFromUrl} />
         <motion.h1
           className="text-6xl font-bold  text-center py-[8px] mb-10"
           initial={{ opacity: 0, y: -20 }}
@@ -148,6 +150,7 @@ const DeviceGallery = () => {
         >
           {pageTitle}
         </motion.h1>
+        
 
         <div className="mb-8 p-4 bg-white rounded-lg shadow-md">
           <div className="flex gap-4">

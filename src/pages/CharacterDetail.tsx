@@ -115,6 +115,15 @@ const DeviceDetail = () => {
       .slice(0, 6); // Show only first 6 important specs
   };
 
+  const formatStoreName = (storeKey: string) => {
+    const storeNames: { [key: string]: string } = {
+      'cellphones': 'CellphoneS',
+      'fptshop': 'FPT Shop',
+      'tgdd': 'Thế Giới Di Động'
+    };
+    return storeNames[storeKey] || storeKey;
+  };
+
   return (
     <motion.div
       className="min-h-screen pt-20 bg-[#fff8fa] text-slate-800"
@@ -193,7 +202,7 @@ const DeviceDetail = () => {
                   }}
                 >
                   <span className="text-xl">🏭</span>
-                  <span>{device.brand}</span>
+                  <span className="capitalize">{device.brand}</span>
                 </motion.div>
                 <motion.div
                   className="flex items-center gap-2 bg-black bg-opacity-30 rounded-full px-4 py-2"
@@ -203,7 +212,7 @@ const DeviceDetail = () => {
                   }}
                 >
                   <span className="text-xl">📱</span>
-                  <span>{device.category}</span>
+                  <span className="capitalize">{device.category}</span>
                 </motion.div>
                 <motion.div
                   className="flex items-center gap-2 bg-black bg-opacity-30 rounded-full px-4 py-2"
@@ -279,8 +288,8 @@ const DeviceDetail = () => {
                     key={store}
                     className="border-b last:border-b-0 pb-4 last:pb-0"
                   >
-                    <h3 className="font-semibold text-lg mb-2 capitalize">
-                      {store}
+                    <h3 className="font-semibold text-lg mb-2">
+                      {formatStoreName(store)}
                     </h3>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                       {prices.map(({ color, price }, index) => (
@@ -301,7 +310,7 @@ const DeviceDetail = () => {
                       rel="noopener noreferrer"
                       className="inline-block mt-2 text-blue-500 hover:text-blue-600"
                     >
-                      Xem tại {store} →
+                      Xem tại {formatStoreName(store)} →
                     </a>
                   </div>
                 ))}

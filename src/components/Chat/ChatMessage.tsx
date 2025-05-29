@@ -1,4 +1,5 @@
 import React from "react";
+import ReactMarkdown from "react-markdown";
 
 interface ChatMessageProps {
   message: string;
@@ -12,39 +13,46 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
     return null;
   };
 
-  // Regex bắt các link có hoặc không có https
-  const urlRegex =
-    /(https?:\/\/[^\s*<>()"']+|(?:www\.)?[a-z0-9.-]+\.[a-z]{2,}(?:\/[^\s*<>()"']*)?)/gi;
+  // Hàm xử lý an toàn hơn cho trường hợp có link markdown hoặc URL thô
+  const convertUrlsToMarkdownLinksSafely = (text: string): string => {
+    const parts = text.split(/(\[.*?\]\(.*?\))/g);
 
-  const parts = message.split(urlRegex);
+    return parts
+      .map((part) => {
+        if (part.match(/^\[.*?\]\(.*?\)$/)) {
+          // Phần đã là markdown link, giữ nguyên
+          return part;
+        } else {
+          // Phần chưa phải markdown link, convert url thô thành markdown link
+          return part.replace(/https:\/\/[^\s)]+/g, (url) => `[${url}](${url})`);
+        }
+      })
+      .join("");
+  };
+
+  const parsedMessage = convertUrlsToMarkdownLinksSafely(message);
 
   return (
-    <div>
-      {parts.map((part, index) => {
-        // Loại bỏ các ký tự đặc biệt bao quanh (như ** hoặc <>)
-        const cleanedPart = part.replace(/^[*<>"'()]+|[*<>"'()]+$/g, "");
-        const brand = getBrandFromUrl(cleanedPart);
-
-        if (brand) {
-          const normalizedUrl = cleanedPart.startsWith("http")
-            ? cleanedPart
-            : `https://${cleanedPart}`;
-
-          return (
-            <a
-              key={index}
-              href={normalizedUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 underline font-medium"
-            >
-              {brand}
-            </a>
-          );
-        } else {
-          return <span key={index}>{part}</span>;
-        }
-      })}
+    <div className="prose max-w-none prose-p:my-1 prose-li:my-1 prose-ul:my-1 prose-h2:mt-2 prose-h2:mb-1">
+      <ReactMarkdown
+        components={{
+          a: ({ href, children }) => {
+            const brand = href ? getBrandFromUrl(href) : null;
+            return (
+              <a
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 underline font-medium"
+              >
+                {brand || children}
+              </a>
+            );
+          },
+        }}
+      >
+        {parsedMessage}
+      </ReactMarkdown>
     </div>
   );
 };

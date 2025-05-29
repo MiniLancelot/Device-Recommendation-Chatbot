@@ -36,13 +36,11 @@ const Home = () => {
 
   const commonPrompts = [
     "Laptop cho lập trình viên",
-    "Điện thoại chụp ảnh đẹp",
-    "Tai nghe chống ồn",
-    "Máy giặt cửa ngang",
+    "Điện thoại chơi game",
+    "Máy đọc sách giá dưới 15 triệu",
+    "iPhone 16 trên 30 triệu",
     "Điện thoại dưới 10 triệu",
     "iPhone mới nhất",
-    "Tivi Samsung 4K",
-    "Tủ lạnh tiết kiệm điện",
   ];
 
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -201,11 +199,10 @@ const Home = () => {
             {listMessages.map((msg, index) => (
               <div key={index} className="w-[90vw] lg:w-[60vw]">
                 <div
-                  className={`msg px-5 py-3 w-fit rounded-3xl whitespace-pre-wrap ${
-                    msg.sender === "user"
-                      ? "ml-auto max-w-[40vw]"
-                      : "bg-none w-full"
-                  }`}
+                  className={`msg px-5 py-3 w-fit rounded-3xl whitespace-pre-wrap ${msg.sender === "user"
+                    ? "ml-auto max-w-[40vw]"
+                    : "bg-none w-full"
+                    }`}
                   style={{
                     backgroundColor:
                       msg.sender === "user" ? "#dedede" : "transparent",
@@ -226,39 +223,39 @@ const Home = () => {
 
                       {(ratings[msg.id] === undefined ||
                         ratings[msg.id] === "like") && (
-                        <button
-                          className="p-2 cursor-pointer"
-                          onClick={() => handleRating(msg.id, "like")}
-                        >
-                          {ratings[msg.id] === "like" ? (
-                            <Tooltip text="Hài lòng" position="bottom">
-                              <BiSolidLike size={20} />
-                            </Tooltip>
-                          ) : (
-                            <Tooltip text="Hài lòng" position="bottom">
-                              <BiLike size={20} />
-                            </Tooltip>
-                          )}
-                        </button>
-                      )}
+                          <button
+                            className="p-2 cursor-pointer"
+                            onClick={() => handleRating(msg.id, "like")}
+                          >
+                            {ratings[msg.id] === "like" ? (
+                              <Tooltip text="Hài lòng" position="bottom">
+                                <BiSolidLike size={20} />
+                              </Tooltip>
+                            ) : (
+                              <Tooltip text="Hài lòng" position="bottom">
+                                <BiLike size={20} />
+                              </Tooltip>
+                            )}
+                          </button>
+                        )}
 
                       {(ratings[msg.id] === undefined ||
                         ratings[msg.id] === "dislike") && (
-                        <button
-                          className="p-2 cursor-pointer"
-                          onClick={() => handleRating(msg.id, "dislike")}
-                        >
-                          {ratings[msg.id] === "dislike" ? (
-                            <Tooltip text="Không hài lòng" position="bottom">
-                              <BiSolidDislike size={20} />
-                            </Tooltip>
-                          ) : (
-                            <Tooltip text="Không hài lòng" position="bottom">
-                              <BiDislike size={20} />
-                            </Tooltip>
-                          )}
-                        </button>
-                      )}
+                          <button
+                            className="p-2 cursor-pointer"
+                            onClick={() => handleRating(msg.id, "dislike")}
+                          >
+                            {ratings[msg.id] === "dislike" ? (
+                              <Tooltip text="Không hài lòng" position="bottom">
+                                <BiSolidDislike size={20} />
+                              </Tooltip>
+                            ) : (
+                              <Tooltip text="Không hài lòng" position="bottom">
+                                <BiDislike size={20} />
+                              </Tooltip>
+                            )}
+                          </button>
+                        )}
                     </div>
                   )}
                 </div>
@@ -291,11 +288,10 @@ const Home = () => {
                 handleSendMsg();
               }
             }}
-            placeholder={`${
-              listMessages.length < 1
-                ? "Nhập câu hỏi của bạn...Ví dụ: Laptop dưới 20 triệu"
-                : ""
-            }`}
+            placeholder={`${listMessages.length < 1
+              ? "Nhập câu hỏi của bạn...Ví dụ: Laptop dưới 20 triệu"
+              : ""
+              }`}
           />
           {botTyping ? (
             <div className="ml-auto">

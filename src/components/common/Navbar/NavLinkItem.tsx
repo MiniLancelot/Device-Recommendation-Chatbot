@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 type Props = {
   to: string;
   label: string;
+  isActive: boolean;
   isHovered: boolean;
   onMouseEnter: () => void;
   onMouseLeave: () => void;
@@ -12,6 +13,7 @@ type Props = {
 const NavLinkItem = ({
   to,
   label,
+  isActive,
   isHovered,
   onMouseEnter,
   onMouseLeave,
@@ -20,6 +22,7 @@ const NavLinkItem = ({
   <Link
     to={to}
     className={`menu-item desc text-lg lg:text-xl cursor-pointer transition-opacity font-semibold
+      ${isActive ? "text-primary-blue opacity-100" : ""}
       ${isHovered ? "text-primary-blue opacity-100" : ""}
     `}
     onMouseEnter={onMouseEnter}

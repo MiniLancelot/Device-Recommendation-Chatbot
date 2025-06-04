@@ -4,24 +4,19 @@ import { motion, AnimatePresence } from "framer-motion";
 import "./styles.css";
 import { useNavStore } from "../../stores/store";
 import Footer from "../../components/common/Footer/Footer";
+import { useState } from "react";
+import MiniChatbox from "../../components/Chat/MiniChatbox";
+import { LuMessageSquare } from "react-icons/lu";
+import HoverButton from "../../components/common/Button/HoverButton";
 
 const MainLayout = () => {
   const { isMobileOpen, closeMobile } = useNavStore();
   const location = useLocation();
-  const isFooterRequired = location.pathname !== "/";
+  const isHomePage = location.pathname !== "/";
+  const [showChat, setShowChat] = useState(false);
 
-  // const headerRef = useRef<HTMLElement>(null);
-  // const [headerHeight, setHeaderHeight] = useState(0);
-
-  // useLayoutEffect(() => {
-  //   if (headerRef.current) {
-  //     setHeaderHeight(headerRef.current.offsetHeight);
-  //   }
-  // }, []);
   return (
-    <div
-      className="main-container w-full min-h-screen flex flex-col items-center bg-primary-color" // Maybe add 'relative' class to the main container
-    >
+    <div className="main-container w-full min-h-screen flex flex-col items-center bg-primary-color">
       <AnimatePresence>
         {isMobileOpen && (
           <motion.div
@@ -35,13 +30,32 @@ const MainLayout = () => {
         )}
       </AnimatePresence>
 
-      {/* <Header ref={headerRef} /> */}
       <Header />
-      {/* <div style={{ paddingTop: headerHeight }} className="w-full"> */}
       <Outlet />
-      {/* </div> */}
+      {isHomePage && (
+        <AnimatePresence mode="wait">
+          {showChat && (
+            <MiniChatbox key="chatbox" onClose={() => setShowChat(false)} />
+          )}
+          {!showChat && (
+            <motion.div
+              className="fixed bottom-6 right-6"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <HoverButton
+                text="Hỏi Techie"
+                icon={<LuMessageSquare />}
+                onClick={() => setShowChat(true)}
+              />
+              {/* <FloatChatButton onClick={() => setShowChat(true)} /> */}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      )}
 
-      {isFooterRequired && <Footer />}
+      {isHomePage && <Footer />}
     </div>
   );
 };

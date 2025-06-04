@@ -117,43 +117,6 @@ const Home = () => {
 
     setListMessages((prevMessages) => [...prevMessages, botMsg]);
   };
-
-  // const handleBotReply = () => {
-  //   let botReply = "";
-
-  //   let index = 0;
-
-  //   const messageId = listMessages.length;
-
-  //   const interval = setInterval(() => {
-  //     if (index < fakeBotMsg.length) {
-  //       botReply += fakeBotMsg[index];
-
-  //       setListMessages((prev) => {
-  //         const lastMessage = prev[prev.length - 1];
-
-  //         if (lastMessage?.sender === "bot") {
-  //           return [
-  //             ...prev.slice(0, -1),
-
-  //             { text: botReply, sender: "bot", id: messageId },
-  //           ];
-  //         } else {
-  //           return [...prev, { text: botReply, sender: "bot", id: messageId }];
-  //         }
-  //       });
-
-  //       scrollToBottom(); // Cuộn xuống mỗi lần cập nhật tin nhắn bot
-
-  //       index++;
-  //     } else {
-  //       clearInterval(interval);
-
-  //       setBotTyping(false);
-  //     }
-  //   }, 30);
-  // };
-
   const handleRating = (id: number, type: "like" | "dislike") => {
     if (ratings[id] === undefined) {
       setRatings((prev) => ({
@@ -199,10 +162,11 @@ const Home = () => {
             {listMessages.map((msg, index) => (
               <div key={index} className="w-[90vw] lg:w-[60vw]">
                 <div
-                  className={`msg px-5 py-3 w-fit rounded-3xl whitespace-pre-wrap ${msg.sender === "user"
-                    ? "ml-auto max-w-[40vw]"
-                    : "bg-none w-full"
-                    }`}
+                  className={`msg px-5 py-3 w-fit rounded-3xl whitespace-pre-wrap ${
+                    msg.sender === "user"
+                      ? "ml-auto max-w-[40vw]"
+                      : "bg-none w-full"
+                  }`}
                   style={{
                     backgroundColor:
                       msg.sender === "user" ? "#dedede" : "transparent",
@@ -223,39 +187,39 @@ const Home = () => {
 
                       {(ratings[msg.id] === undefined ||
                         ratings[msg.id] === "like") && (
-                          <button
-                            className="p-2 cursor-pointer"
-                            onClick={() => handleRating(msg.id, "like")}
-                          >
-                            {ratings[msg.id] === "like" ? (
-                              <Tooltip text="Hài lòng" position="bottom">
-                                <BiSolidLike size={20} />
-                              </Tooltip>
-                            ) : (
-                              <Tooltip text="Hài lòng" position="bottom">
-                                <BiLike size={20} />
-                              </Tooltip>
-                            )}
-                          </button>
-                        )}
+                        <button
+                          className="p-2 cursor-pointer"
+                          onClick={() => handleRating(msg.id, "like")}
+                        >
+                          {ratings[msg.id] === "like" ? (
+                            <Tooltip text="Hài lòng" position="bottom">
+                              <BiSolidLike size={20} />
+                            </Tooltip>
+                          ) : (
+                            <Tooltip text="Hài lòng" position="bottom">
+                              <BiLike size={20} />
+                            </Tooltip>
+                          )}
+                        </button>
+                      )}
 
                       {(ratings[msg.id] === undefined ||
                         ratings[msg.id] === "dislike") && (
-                          <button
-                            className="p-2 cursor-pointer"
-                            onClick={() => handleRating(msg.id, "dislike")}
-                          >
-                            {ratings[msg.id] === "dislike" ? (
-                              <Tooltip text="Không hài lòng" position="bottom">
-                                <BiSolidDislike size={20} />
-                              </Tooltip>
-                            ) : (
-                              <Tooltip text="Không hài lòng" position="bottom">
-                                <BiDislike size={20} />
-                              </Tooltip>
-                            )}
-                          </button>
-                        )}
+                        <button
+                          className="p-2 cursor-pointer"
+                          onClick={() => handleRating(msg.id, "dislike")}
+                        >
+                          {ratings[msg.id] === "dislike" ? (
+                            <Tooltip text="Không hài lòng" position="bottom">
+                              <BiSolidDislike size={20} />
+                            </Tooltip>
+                          ) : (
+                            <Tooltip text="Không hài lòng" position="bottom">
+                              <BiDislike size={20} />
+                            </Tooltip>
+                          )}
+                        </button>
+                      )}
                     </div>
                   )}
                 </div>
@@ -275,7 +239,7 @@ const Home = () => {
           </div>
         )}
 
-        <div className="msg-input-container flex flex-col justify-end gap-2 rounded-2xl bg-secondary-white-color p-4 mb-5 shadow-[0_4px_4px_rgba(0,0,0,0.25)] sh w-[90vw] lg:w-[60vw] ">
+        <div className="msg-input-container flex flex-col justify-end gap-2 rounded-2xl bg-secondary-white-color p-4 mb-5 shadow-[0_4px_4px_rgba(0,0,0,0.25)] w-[90vw] lg:w-[60vw] ">
           <textarea
             ref={textareaRef}
             className="w-full outline-none resize-none text-base min-12"
@@ -288,17 +252,18 @@ const Home = () => {
                 handleSendMsg();
               }
             }}
-            placeholder={`${listMessages.length < 1
-              ? "Nhập câu hỏi của bạn...Ví dụ: Laptop dưới 20 triệu"
-              : ""
-              }`}
+            placeholder={`${
+              listMessages.length < 1
+                ? "Nhập câu hỏi của bạn...Ví dụ: Laptop dưới 20 triệu"
+                : ""
+            }`}
           />
           {botTyping ? (
             <div className="ml-auto">
               <Tooltip position="bottom" text="Dừng">
                 <button
                   onClick={handleCancel}
-                  className="ml-auto bg-gradient-to-r from-[#0A3772] to-[#875FD6] text-white p-3.5 rounded-full hover:bg-gray-800 transition cursor-pointer"
+                  className="ml-auto bg-gradient-to-r from-[#0A3772] to-[#875FD6] text-white p-3.5 rounded-full hover:opacity-90 transition cursor-pointer"
                 >
                   <FaSquare size={12} />
                 </button>
@@ -309,7 +274,7 @@ const Home = () => {
               <Tooltip position="bottom" text="Gửi">
                 <button
                   onClick={handleSendMsg}
-                  className=" bg-gradient-to-br from-[#0A3772] to-[#875FD6] text-white p-2 rounded-full hover:bg-gray-800 transition cursor-pointer"
+                  className=" bg-gradient-to-br from-[#0A3772] to-[#875FD6] text-white p-2 rounded-full hover:opacity-90 transition cursor-pointer"
                 >
                   <LuArrowUp size={24} />
                 </button>
@@ -319,7 +284,7 @@ const Home = () => {
         </div>
 
         {listMessages.length < 1 && (
-          <div className="common-prompts hidden lg:flex flex-wrap justify-center items-center gap-4 w-[60vw]">
+          <div className="common-prompts hidden lg:flex flex-wrap justify-center items-center gap-4 w-[50vw]">
             {commonPrompts.map((item, index) => (
               <CustomButton
                 textColor="#875FD6"

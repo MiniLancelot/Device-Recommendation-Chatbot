@@ -12,19 +12,23 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
     if (url.includes("fptshop.com.vn")) return "FPT Shop";
     return null;
   };
-
-  // Hàm xử lý an toàn hơn cho trường hợp có link markdown hoặc URL thô
   const convertUrlsToMarkdownLinksSafely = (text: string): string => {
-    const parts = text.split(/(\[.*?\]\(.*?\))/g);
+    console.log("response: ", text);
+    // Xóa tất cả ký tự xuống dòng
+    const cleanedText = text.replace(/\n{2,}/g, "\n");
+    console.log("response after clean: ", text);
+    // Tách và xử lý markdown links
+    const parts = cleanedText.split(/(\[.*?\]\(.*?\))/g);
 
     return parts
       .map((part) => {
         if (part.match(/^\[.*?\]\(.*?\)$/)) {
-          // Phần đã là markdown link, giữ nguyên
           return part;
         } else {
-          // Phần chưa phải markdown link, convert url thô thành markdown link
-          return part.replace(/https:\/\/[^\s)]+/g, (url) => `[${url}](${url})`);
+          return part.replace(
+            /https:\/\/[^\s)]+/g,
+            (url) => `[${url}](${url})`
+          );
         }
       })
       .join("");
@@ -33,7 +37,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
   const parsedMessage = convertUrlsToMarkdownLinksSafely(message);
 
   return (
-    <div className="prose max-w-none prose-p:my-1 prose-li:my-1 prose-ul:my-1 prose-h2:mt-2 prose-h2:mb-1">
+    <div className="leading-snug">
       <ReactMarkdown
         components={{
           a: ({ href, children }) => {

@@ -19,10 +19,12 @@ const Navbar = () => {
     left: 0,
   });
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const menuRef = useRef<HTMLUListElement>(null);
   const mobileItemRefs = useRef<(HTMLAnchorElement | null)[]>([]);
   const searchRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const { isMobileOpen, toggleMobile, closeMobile } = useNavStore();
   const location = useLocation();
 
@@ -134,11 +136,13 @@ const Navbar = () => {
         >
           <div className="relative">
             <input
+              ref={searchInputRef}
               type="text"
               placeholder="Tìm kiếm nhanh"
-              className="w-full bg-primary-color rounded-full pl-4 pr-10 py-2 focus:outline-none text-sm sm:text-base mx-4 lg:mx-0 cursor-pointer"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full bg-primary-color rounded-full pl-4 pr-10 py-2 focus:outline-none text-sm sm:text-base mx-4 lg:mx-0"
               onFocus={() => setIsSearchOpen(true)}
-              readOnly
             />
             <LuSearch
               className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none"
@@ -149,6 +153,7 @@ const Navbar = () => {
           <SearchDropdown 
             isOpen={isSearchOpen} 
             onClose={() => setIsSearchOpen(false)} 
+            searchTerm={searchTerm}
           />
         </div>
       </nav>

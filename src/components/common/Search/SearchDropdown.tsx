@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LuSearch, LuClock, LuX } from 'react-icons/lu';
+import { LuSearch, LuX } from 'react-icons/lu';
 import { useDebounce } from '../../../hooks/useDebounce';
 import { useNavigate } from 'react-router-dom';
 
@@ -15,16 +15,15 @@ interface SearchDevice {
 interface SearchDropdownProps {
   isOpen: boolean;
   onClose: () => void;
+  searchTerm: string;
 }
 
-const SearchDropdown: React.FC<SearchDropdownProps> = ({ isOpen, onClose }) => {
-  const [searchTerm, setSearchTerm] = useState('');
+const SearchDropdown: React.FC<SearchDropdownProps> = ({ isOpen, onClose, searchTerm }) => {
   const [searchResults, setSearchResults] = useState<SearchDevice[]>([]);
   const [searchHistory, setSearchHistory] = useState<SearchDevice[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
-  const searchInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
   // Load search history from localStorage
@@ -34,13 +33,6 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({ isOpen, onClose }) => {
       setSearchHistory(JSON.parse(savedHistory));
     }
   }, []);
-
-  // Focus input when dropdown opens
-  useEffect(() => {
-    if (isOpen && searchInputRef.current) {
-      searchInputRef.current.focus();
-    }
-  }, [isOpen]);
 
   // Fetch random devices or search results
   useEffect(() => {
@@ -90,6 +82,10 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({ isOpen, onClose }) => {
     }).format(price);
   };
 
+  const capitalizeBrand = (brand: string) => {
+    return brand.charAt(0).toUpperCase() + brand.slice(1).toLowerCase();
+  };
+
   const saveToHistory = (device: SearchDevice) => {
     const updatedHistory = [
       device,
@@ -125,27 +121,12 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({ isOpen, onClose }) => {
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-xl  z-50 max-h-96 overflow-hidden"
+          className="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-xl z-50 max-h-96 overflow-hidden"
           initial={{ opacity: 0, y: -10, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: -10, scale: 0.95 }}
           transition={{ duration: 0.2, ease: "easeOut" }}
         >
-          {/* Search Input */}
-          <div className="p-4">
-            <div className="relative">
-              <LuSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-              <input
-                ref={searchInputRef}
-                type="text"
-                placeholder="Tìm kiếm thiết bị..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue"
-              />
-            </div>
-          </div>
-
           {/* Results */}
           <div className="max-h-80 overflow-y-auto">
             {isLoading ? (
@@ -156,16 +137,16 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({ isOpen, onClose }) => {
               <>
                 {/* Header */}
                 {showResults && (
-                  <div className="flex items-center justify-between px-4 py-2 bg-white">
+                  <div className="flex items-center justify-between px-4 py-3 ">
                     <div className="flex items-center gap-2 text-sm text-gray-600">
                       {!searchTerm.trim() && searchHistory.length > 0 ? (
                         <>
-                          <LuClock size={16} />
+                          
                           <span>Lịch sử tìm kiếm</span>
                         </>
                       ) : (
                         <>
-                          <LuSearch size={16} />
+                          {/* <LuSearch size={16} /> */}
                           <span>
                             {searchTerm.trim() ? 'Kết quả tìm kiếm' : 'Thiết bị gợi ý'}
                           </span>
@@ -211,7 +192,7 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({ isOpen, onClose }) => {
                             {device.display_name}
                           </h3>
                           <div className="flex items-center gap-2 text-sm text-gray-500">
-                            <span>{device.brand}</span>
+                            <span>{capitalizeBrand(device.brand)}</span>
                             <span>•</span>
                             <span className="font-medium text-primary-blue">
                               {device.min_price > 0 ? formatPrice(device.min_price) : 'Liên hệ'}

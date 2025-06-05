@@ -157,16 +157,16 @@ const DeviceGallery = () => {
     const newSelectedNeeds = selectedNeeds.includes(need)
       ? selectedNeeds.filter((n) => n !== need)
       : [...selectedNeeds, need];
-    
+
     setSelectedNeeds(newSelectedNeeds);
-    
+
     const newParams = new URLSearchParams(searchParams);
     if (newSelectedNeeds.length > 0) {
       newParams.set("needs", newSelectedNeeds.join(","));
     } else {
       newParams.delete("needs");
     }
-    
+
     if (categoryFromUrl) {
       newParams.set("category", categoryFromUrl);
     }
@@ -230,15 +230,8 @@ const DeviceGallery = () => {
     <>
       <div className="container mx-auto pt-20 lg:py-30  text-slate-800 lg:px-[180px] px-8">
         <HeroCarousel category={categoryFromUrl} />
-        <motion.h1
-          className="text-6xl font-bold  text-center py-[8px] mb-10"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          {pageTitle}
-        </motion.h1>
-        
+
+
 
         <div className="mb-8 p-4 bg-white rounded-lg shadow-md">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

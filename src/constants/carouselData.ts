@@ -53,7 +53,7 @@ export const carouselData: Record<string, CarouselItem[]> = {
       title: "Xiaomi 14 Ultra - Nhiếp ảnh chuyên nghiệp",
       image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=1200&h=600&fit=crop",
       thumbnail: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=200&h=100&fit=crop",
-      buttonLink: "xiaomi-14-ultra-12gb-256gb",
+      buttonLink: "xiaomi-14-ultra-12gb-512gb",
     },
   ],
 

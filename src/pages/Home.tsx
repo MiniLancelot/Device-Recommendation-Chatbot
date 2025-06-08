@@ -35,7 +35,7 @@ const Home = () => {
   //   "Sản phẩm này có ở cellphones.com.vn/iphone-16-pro-max.html và https://fptshop.com.vn/dien-thoai/iphone-16-pro-max.";
 
   const commonPrompts = [
-    "Laptop cho lập trình viên",
+    "Thông tin ",
     "Điện thoại chơi game",
     "Máy đọc sách giá dưới 15 triệu",
     "iPhone 16 trên 30 triệu",

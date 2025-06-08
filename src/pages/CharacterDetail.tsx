@@ -79,6 +79,9 @@ const DeviceDetail = () => {
   }
 
   const formatPrice = (price: number) => {
+    if (!price || price === 0) {
+      return "Liên hệ cửa hàng";
+    }
     return new Intl.NumberFormat("vi-VN", {
       style: "currency",
       currency: "VND",
@@ -89,10 +92,10 @@ const DeviceDetail = () => {
     let lowestPrice = Infinity;
     Object.values(device.prices).forEach((storePrices) => {
       storePrices.forEach(({ price }) => {
-        if (price < lowestPrice) lowestPrice = price;
+        if (price > 0 && price < lowestPrice) lowestPrice = price;
       });
     });
-    return lowestPrice;
+    return lowestPrice === Infinity ? 0 : lowestPrice;
   };
 
   // Get important specifications to show initially
@@ -222,7 +225,7 @@ const DeviceDetail = () => {
                   }}
                 >
                   <span className="text-xl">💰</span>
-                  <span>Từ {formatPrice(getLowestPrice())}</span>
+                  <span>{getLowestPrice() > 0 ? `Từ ${formatPrice(getLowestPrice())}` : formatPrice(0)}</span>
                 </motion.div>
               </motion.div>
             </motion.div>
@@ -295,9 +298,15 @@ const DeviceDetail = () => {
                       {prices.map(({ color, price }, index) => (
                         <div
                           key={index}
-                          className="flex justify-between items-center bg-gray-50 p-2 rounded"
+                          className={`bg-gray-50 p-2 rounded ${
+                            color === 'default' 
+                              ? 'flex justify-center items-center' 
+                              : 'flex justify-between items-center'
+                          }`}
                         >
-                          <span className="text-sm">{color}</span>
+                          {color !== 'default' && (
+                            <span className="text-sm">{color}</span>
+                          )}
                           <span className="font-medium">
                             {formatPrice(price)}
                           </span>

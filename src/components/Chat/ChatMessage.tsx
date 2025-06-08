@@ -13,10 +13,8 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
     return null;
   };
   const convertUrlsToMarkdownLinksSafely = (text: string): string => {
-    console.log("response: ", text);
     // Xóa tất cả ký tự xuống dòng
     const cleanedText = text.replace(/\n{2,}/g, "\n");
-    console.log("response after clean: ", text);
     // Tách và xử lý markdown links
     const parts = cleanedText.split(/(\[.*?\]\(.*?\))/g);
 

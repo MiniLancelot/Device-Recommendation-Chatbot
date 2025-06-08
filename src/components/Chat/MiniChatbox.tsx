@@ -6,6 +6,7 @@ import Tooltip from "../common/Tooltip/CustomToolTip";
 import { LuArrowUp } from "react-icons/lu";
 import { FaSquare } from "react-icons/fa6";
 import ChatMessage from "./ChatMessage";
+import axios from "axios";
 
 export default function MiniChatBox({ onClose }: { onClose?: () => void }) {
   const [userPrompt, setUserPrompt] = useState<string>("");
@@ -14,6 +15,10 @@ export default function MiniChatBox({ onClose }: { onClose?: () => void }) {
     { text: string; sender: "user" | "bot"; id: number }[]
   >([]);
   const [botTyping, setBotTyping] = useState<boolean>(false);
+  const textStopResponse =
+    "Bạn đã yêu cầu dừng phản hồi. Techie sẵn sàng hỗ trợ khi bạn gửi câu hỏi tiếp theo!";
+  const textErrorResponse =
+    "Techie đang gặp một chút trục trặc, bạn quay lại sau nhé!";
   const abortControllerRef = useRef<AbortController | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const scrollToBottom = () => {
@@ -30,7 +35,6 @@ export default function MiniChatBox({ onClose }: { onClose?: () => void }) {
     setListMessages((prevMessages) => [...prevMessages, userMsg]);
 
     setUserPrompt("");
-
     setBotTyping(true);
     scrollToBottom();
 
@@ -39,17 +43,41 @@ export default function MiniChatBox({ onClose }: { onClose?: () => void }) {
 
     try {
       const botReply = await askChatbot(userPrompt, controller.signal);
+      console.log("bot reply: ", botReply);
+
+      let safeText: string;
+
+      if (typeof botReply === "string") {
+        safeText = botReply;
+      } else if (typeof botReply === "object" && botReply !== null) {
+        // Nếu là object chứa thông báo lỗi từ server
+        safeText = textErrorResponse;
+      } else {
+        // Trường hợp không xác định
+        safeText = textErrorResponse;
+      }
+
       const botMsg = {
-        text: botReply,
+        text: safeText,
         sender: "bot" as const,
         id: userMsg.id + 1,
       };
 
       setListMessages((prevMessages) => [...prevMessages, botMsg]);
-
       scrollToBottom();
-    } catch (error) {
+    } catch (error: unknown) {
+      if (axios.isCancel(error)) {
+        console.warn("Yêu cầu đã bị huỷ bằng AbortController (Axios).");
+        return;
+      }
       console.error("Lỗi khi gọi chatbot:", error);
+      const botMsg = {
+        text: textErrorResponse,
+        sender: "bot" as const,
+        id: userMsg.id + 1,
+      };
+
+      setListMessages((prevMessages) => [...prevMessages, botMsg]);
     } finally {
       setBotTyping(false);
       abortControllerRef.current = null;
@@ -60,6 +88,13 @@ export default function MiniChatBox({ onClose }: { onClose?: () => void }) {
       abortControllerRef.current.abort();
     }
     setBotTyping(false);
+    const botMsg = {
+      text: textStopResponse,
+      sender: "bot" as const,
+      id: listMessages.length + 1,
+    };
+
+    setListMessages((prevMessages) => [...prevMessages, botMsg]);
   };
   return (
     <motion.div

@@ -8,6 +8,7 @@ import NavIndicator from "./NavIndicator";
 import MobileMenu from "./MobileMenu";
 import { LuSearch } from "react-icons/lu";
 import DeviceDropdown from "./DeviceDropdown";
+import SearchDropdown from "../Search/SearchDropdown";
 
 const Navbar = () => {
   const [activeIndex, setActiveIndex] = useState<number>(0);
@@ -17,9 +18,13 @@ const Navbar = () => {
     width: 0,
     left: 0,
   });
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const menuRef = useRef<HTMLUListElement>(null);
   const mobileItemRefs = useRef<(HTMLAnchorElement | null)[]>([]);
+  const searchRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const { isMobileOpen, toggleMobile, closeMobile } = useNavStore();
   const location = useLocation();
 
@@ -44,6 +49,21 @@ const Navbar = () => {
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
   }, [activeIndex, isMobileOpen, closeMobile]);
+
+  // Close search dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        searchRef.current &&
+        !searchRef.current.contains(event.target as Node)
+      ) {
+        setIsSearchOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const updateIndicator = (index: number) => {
     if (index === -1) {
@@ -89,6 +109,7 @@ const Navbar = () => {
                 <NavLinkItem
                   to={link.path}
                   label={link.name}
+                  // isActive={activeIndex === index}
                   isHovered={hoverIndex === index}
                   onMouseEnter={() => {
                     setHoverIndex(index);
@@ -109,15 +130,30 @@ const Navbar = () => {
           </ul>
         </div>
 
-        <div className="relative w-full sm:w-80 md:w-85 lg:w-90 inline-block">
-          <input
-            type="text"
-            placeholder="Tìm kiếm nhanh"
-            className="w-full bg-primary-color rounded-full pl-4 pr-10 py-2 focus:outline-none text-sm sm:text-base mx-4 lg:mx-0"
-          />
-          <LuSearch
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500"
-            size={20}
+        <div
+          ref={searchRef}
+          className="relative w-full sm:w-80 md:w-85 lg:w-90 inline-block"
+        >
+          <div className="relative">
+            <input
+              ref={searchInputRef}
+              type="text"
+              placeholder="Tìm kiếm nhanh"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full bg-primary-color rounded-full pl-4 pr-10 py-2 focus:outline-none text-sm sm:text-base mx-4 lg:mx-0"
+              onFocus={() => setIsSearchOpen(true)}
+            />
+            <LuSearch
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none"
+              size={20}
+            />
+          </div>
+
+          <SearchDropdown
+            isOpen={isSearchOpen}
+            onClose={() => setIsSearchOpen(false)}
+            searchTerm={searchTerm}
           />
         </div>
       </nav>

@@ -7,12 +7,14 @@ import {
 } from "react-icons/bi";
 import { LuArrowUp } from "react-icons/lu";
 import { FaSquare } from "react-icons/fa6";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "../styles/Home.css";
 import { askChatbot } from "../services/chatbotService";
 // import CustomButton from "../components/common/Button/CustomButon";
 import ChatMessage from "../components/Chat/ChatMessage";
 import Tooltip from "../components/common/Tooltip/CustomToolTip";
+import { motion } from "framer-motion";
+import axios from "axios";
 
 const Home = () => {
   const [userPrompt, setUserPrompt] = useState<string>("");
@@ -25,6 +27,8 @@ const Home = () => {
   const abortControllerRef = useRef<AbortController | null>(null);
   const textStopResponse =
     "Bạn đã yêu cầu dừng phản hồi. Techie sẵn sàng hỗ trợ khi bạn gửi câu hỏi tiếp theo!";
+  const textErrorResponse =
+    "Techie đang gặp một chút trục trặc, bạn quay lại sau nhé!";
 
   const [tooltipText, setTooltipText] = useState("Sao chép");
   const [ratings, setRatings] = useState<{
@@ -64,6 +68,9 @@ const Home = () => {
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
+  useEffect(() => {
+    scrollToBottom();
+  }, [listMessages]);
 
   const handleSendMsg = async () => {
     if (userPrompt.trim() === "") return;
@@ -88,17 +95,41 @@ const Home = () => {
 
     try {
       const botReply = await askChatbot(userPrompt, controller.signal);
+      console.log("bot reply: ", botReply);
+
+      let safeText: string;
+
+      if (typeof botReply === "string") {
+        safeText = botReply;
+      } else if (typeof botReply === "object" && botReply !== null) {
+        // Nếu là object chứa thông báo lỗi từ server
+        safeText = textErrorResponse;
+      } else {
+        // Trường hợp không xác định
+        safeText = textErrorResponse;
+      }
+
       const botMsg = {
-        text: botReply,
+        text: safeText,
         sender: "bot" as const,
         id: userMsg.id + 1,
       };
 
       setListMessages((prevMessages) => [...prevMessages, botMsg]);
-
       scrollToBottom();
-    } catch (error) {
+    } catch (error: unknown) {
+      if (axios.isCancel(error)) {
+        console.warn("Yêu cầu đã bị huỷ bằng AbortController (Axios).");
+        return;
+      }
       console.error("Lỗi khi gọi chatbot:", error);
+      const botMsg = {
+        text: textErrorResponse,
+        sender: "bot" as const,
+        id: userMsg.id + 1,
+      };
+
+      setListMessages((prevMessages) => [...prevMessages, botMsg]);
     } finally {
       setBotTyping(false);
       abortControllerRef.current = null;
@@ -151,16 +182,20 @@ const Home = () => {
   pt-20 lg:pt-24"
       >
         {listMessages.length < 1 ? (
-          <h1
+          <motion.h1
             className="title w-fit p-6 mb-20 text-xl lg:text-5xl font-bold leading-[1.6] font-montserrat
             bg-gradient-to-r from-[#0A3772] to-[#875FD6] bg-clip-text text-transparent"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: "easeInOut" }}
           >
             Chọn đồ công nghệ? Có Techie lo!
-          </h1>
+          </motion.h1>
         ) : (
           <div className="list-msg-container w-full flex flex-col justify-start items-center gap-3 flex-[0.7] grow overflow-y-auto pb-[20px]">
             {listMessages.map((msg, index) => (
               <div key={index} className="w-[90vw] lg:w-[60vw]">
+                <div ref={messagesEndRef} />
                 <div
                   className={`msg px-5 py-3 w-fit rounded-3xl whitespace-pre-wrap ${
                     msg.sender === "user"
@@ -172,56 +207,57 @@ const Home = () => {
                       msg.sender === "user" ? "#dedede" : "transparent",
                   }}
                 >
-                  <ChatMessage message={msg.text} />
+                  {msg.text && <ChatMessage message={msg.text} />}
 
-                  {msg.sender === "bot" && msg.text !== textStopResponse && (
-                    <div className="rating-buttons">
-                      <button
-                        className="p-2 cursor-pointer"
-                        onClick={() => handleCopyMsg(msg.text)}
-                      >
-                        <Tooltip text={tooltipText} position="bottom">
-                          <BiCopy size={20} />
-                        </Tooltip>
-                      </button>
-
-                      {(ratings[msg.id] === undefined ||
-                        ratings[msg.id] === "like") && (
+                  {msg.sender === "bot" &&
+                    msg.text !== (textStopResponse || textErrorResponse) && (
+                      <div className="rating-buttons">
                         <button
                           className="p-2 cursor-pointer"
-                          onClick={() => handleRating(msg.id, "like")}
+                          onClick={() => handleCopyMsg(msg.text)}
                         >
-                          {ratings[msg.id] === "like" ? (
-                            <Tooltip text="Hài lòng" position="bottom">
-                              <BiSolidLike size={20} />
-                            </Tooltip>
-                          ) : (
-                            <Tooltip text="Hài lòng" position="bottom">
-                              <BiLike size={20} />
-                            </Tooltip>
-                          )}
+                          <Tooltip text={tooltipText} position="bottom">
+                            <BiCopy size={20} />
+                          </Tooltip>
                         </button>
-                      )}
 
-                      {(ratings[msg.id] === undefined ||
-                        ratings[msg.id] === "dislike") && (
-                        <button
-                          className="p-2 cursor-pointer"
-                          onClick={() => handleRating(msg.id, "dislike")}
-                        >
-                          {ratings[msg.id] === "dislike" ? (
-                            <Tooltip text="Không hài lòng" position="bottom">
-                              <BiSolidDislike size={20} />
-                            </Tooltip>
-                          ) : (
-                            <Tooltip text="Không hài lòng" position="bottom">
-                              <BiDislike size={20} />
-                            </Tooltip>
-                          )}
-                        </button>
-                      )}
-                    </div>
-                  )}
+                        {(ratings[msg.id] === undefined ||
+                          ratings[msg.id] === "like") && (
+                          <button
+                            className="p-2 cursor-pointer"
+                            onClick={() => handleRating(msg.id, "like")}
+                          >
+                            {ratings[msg.id] === "like" ? (
+                              <Tooltip text="Hài lòng" position="bottom">
+                                <BiSolidLike size={20} />
+                              </Tooltip>
+                            ) : (
+                              <Tooltip text="Hài lòng" position="bottom">
+                                <BiLike size={20} />
+                              </Tooltip>
+                            )}
+                          </button>
+                        )}
+
+                        {(ratings[msg.id] === undefined ||
+                          ratings[msg.id] === "dislike") && (
+                          <button
+                            className="p-2 cursor-pointer"
+                            onClick={() => handleRating(msg.id, "dislike")}
+                          >
+                            {ratings[msg.id] === "dislike" ? (
+                              <Tooltip text="Không hài lòng" position="bottom">
+                                <BiSolidDislike size={20} />
+                              </Tooltip>
+                            ) : (
+                              <Tooltip text="Không hài lòng" position="bottom">
+                                <BiDislike size={20} />
+                              </Tooltip>
+                            )}
+                          </button>
+                        )}
+                      </div>
+                    )}
                 </div>
               </div>
             ))}
@@ -235,11 +271,17 @@ const Home = () => {
                 </span>
               </div>
             )}
-            <div ref={messagesEndRef} />
           </div>
         )}
+        <div ref={messagesEndRef} />
 
-        <div className="msg-input-container flex flex-col justify-end gap-2 rounded-2xl bg-secondary-white-color p-4 mb-5 shadow-[0_4px_4px_rgba(0,0,0,0.25)] w-[90vw] lg:w-[60vw] ">
+        <motion.div
+          className="msg-input-container flex flex-col justify-end gap-2 rounded-2xl p-4 mb-5 w-[90vw] lg:w-[60vw]
+                              bg-secondary-white-color shadow-[0_4px_4px_rgba(0,0,0,0.25)]"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: "easeInOut" }}
+        >
           <textarea
             ref={textareaRef}
             className="w-full outline-none resize-none text-base min-12"
@@ -281,7 +323,7 @@ const Home = () => {
               </Tooltip>
             </div>
           )}
-        </div>
+        </motion.div>
 
         {/* {listMessages.length < 1 && (
           <div className="common-prompts hidden lg:flex flex-wrap justify-center items-center gap-4 w-[50vw]">

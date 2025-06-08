@@ -29,6 +29,8 @@ const DeviceDetail = () => {
   const navigation = useNavigation();
   const [selectedImage, setSelectedImage] = useState(0);
   const [isSpecModalOpen, setIsSpecModalOpen] = useState(false);
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+  const [modalSelectedImage, setModalSelectedImage] = useState(0);
 
   // Animation variants
   const containerVariants = {
@@ -249,7 +251,7 @@ const DeviceDetail = () => {
                 />
               </div>
               <div className="p-4 grid grid-cols-5 gap-2">
-                {device.images.map((image, index) => (
+                {device.images.slice(0, 9).map((image, index) => (
                   <motion.button
                     key={index}
                     className={`aspect-square rounded-lg overflow-hidden border-2 ${
@@ -268,6 +270,28 @@ const DeviceDetail = () => {
                     />
                   </motion.button>
                 ))}
+                {device.images.length > 9 && (
+                  <motion.button
+                    className="aspect-square rounded-lg overflow-hidden border-2 border-gray-200 relative"
+                    onClick={() => {
+                      setModalSelectedImage(0);
+                      setIsImageModalOpen(true);
+                    }}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <img
+                      src={device.images[9]}
+                      alt={`${device.display_name} - more images`}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 backdrop-blur-sm bg-white/40 flex items-center justify-center">
+                      <span className="text-gray-800 text-sm font-bold drop-shadow-sm">
+                        +{device.images.length - 9} more
+                      </span>
+                    </div>
+                  </motion.button>
+                )}
               </div>
             </motion.div>
           </motion.div>
@@ -380,6 +404,65 @@ const DeviceDetail = () => {
           </motion.div>
         </div>
       </motion.div>
+
+      {/* Image Carousel Modal */}
+      <AnimatePresence>
+        {isImageModalOpen && (
+          <motion.div
+            className="fixed inset-0 backdrop-blur-sm bg-black/50 z-50 flex items-center justify-center p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsImageModalOpen(false)}
+          >
+            <motion.div
+              className="relative max-w-4xl w-full max-h-[90vh] flex items-center justify-center"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Previous button */}
+              <motion.button
+                className="absolute left-4 z-10 p-2 rounded-full bg-white/20 text-white hover:bg-white/30 transition-colors"
+                onClick={() => setModalSelectedImage(modalSelectedImage > 0 ? modalSelectedImage - 1 : device.images.length - 1)}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </motion.button>
+
+              {/* Main image */}
+              <div className="bg-white rounded-lg p-4 max-w-3xl max-h-[80vh] flex items-center justify-center">
+                <img
+                  src={device.images[modalSelectedImage]}
+                  alt={`${device.display_name} - ${modalSelectedImage + 1}`}
+                  className="max-w-full max-h-full object-contain"
+                />
+              </div>
+
+              {/* Next button */}
+              <motion.button
+                className="absolute right-4 z-10 p-2 rounded-full bg-white/20 text-white hover:bg-white/30 transition-colors"
+                onClick={() => setModalSelectedImage(modalSelectedImage < device.images.length - 1 ? modalSelectedImage + 1 : 0)}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </motion.button>
+
+              {/* Image counter */}
+              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
+                {modalSelectedImage + 1} / {device.images.length}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Specifications Modal */}
       <AnimatePresence>

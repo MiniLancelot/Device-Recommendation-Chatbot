@@ -7,12 +7,34 @@ import {
 } from "react-icons/bi";
 import { LuArrowUp } from "react-icons/lu";
 import { FaSquare } from "react-icons/fa6";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect, useMemo } from "react";
+import { motion } from "motion/react";
 import "../styles/Home.css";
 import { askChatbot } from "../services/chatbotService";
 import CustomButton from "../components/common/Button/CustomButon";
 import ChatMessage from "../components/Chat/ChatMessage";
 import Tooltip from "../components/common/Tooltip/CustomToolTip";
+
+// Green Grid Animation Component
+const GreenGridAnimation = () => {
+  return (
+    <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+      <div className="grid-container">
+        {Array.from({ length: 15 }, (_, row) => 
+          Array.from({ length: 25 }, (_, col) => (
+            <div
+              key={`${row}-${col}`}
+              className="grid-box"
+              style={{
+                animationDelay: `${(row * 0.3) + (col * 0.05)}s`
+              }}
+            />
+          ))
+        )}
+      </div>
+    </div>
+  );
+};
 
 const Home = () => {
   const [userPrompt, setUserPrompt] = useState<string>("");
@@ -30,6 +52,49 @@ const Home = () => {
   const [ratings, setRatings] = useState<{
     [key: number]: "like" | "dislike" | null;
   }>({});
+
+  // Slogan carousel states
+  const slogans = useMemo(() => [
+    "Chọn đồ công nghệ? Có Techie lo!",
+    "Tư vấn thông minh, chọn đồ tự tin!",
+    "Techie - Người bạn công nghệ tin cậy!",
+    "Đồ tech phù hợp, giá cả hợp lý!",
+    "Mua sắm thông minh cùng Techie!",
+    "Công nghệ cho mọi người, mọi lúc!",
+  ], []);
+  
+  const [currentSloganIndex, setCurrentSloganIndex] = useState(0);
+  const [displayedText, setDisplayedText] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  // Typing animation effect
+  useEffect(() => {
+    const currentSlogan = slogans[currentSloganIndex];
+    let timeout: ReturnType<typeof setTimeout>;
+
+    if (!isDeleting && displayedText !== currentSlogan) {
+      // Typing forward
+      timeout = setTimeout(() => {
+        setDisplayedText(currentSlogan.slice(0, displayedText.length + 1));
+      }, 100);
+    } else if (!isDeleting && displayedText === currentSlogan) {
+      // Finished typing, wait then start deleting
+      timeout = setTimeout(() => {
+        setIsDeleting(true);
+      }, 2000);
+    } else if (isDeleting && displayedText !== "") {
+      // Deleting
+      timeout = setTimeout(() => {
+        setDisplayedText(displayedText.slice(0, -1));
+      }, 50);
+    } else if (isDeleting && displayedText === "") {
+      // Finished deleting, move to next slogan
+      setIsDeleting(false);
+      setCurrentSloganIndex((prev) => (prev + 1) % slogans.length);
+    }
+
+    return () => clearTimeout(timeout);
+  }, [displayedText, isDeleting, currentSloganIndex, slogans]);
 
   // const fakeBotMsg =
   //   "Sản phẩm này có ở cellphones.com.vn/iphone-16-pro-max.html và https://fptshop.com.vn/dien-thoai/iphone-16-pro-max.";
@@ -146,17 +211,30 @@ const Home = () => {
   };
   return (
     <>
+      <GreenGridAnimation />
       <div
-        className="chat-container flex flex-col justify-between lg:justify-center items-center bg-primary-color h-[100vh] w-full
-  pt-20 lg:pt-24"
+        className="chat-container flex flex-col justify-between lg:justify-center items-center h-[100vh] w-full
+  pt-20 lg:pt-24 relative z-10"
+        style={{ backgroundColor: 'rgba(255, 255, 255, 0.85)' }}
       >
         {listMessages.length < 1 ? (
-          <h1
+          <motion.h1
+            key={currentSloganIndex}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
             className="title w-fit p-6 mb-20 text-xl lg:text-5xl font-bold leading-[1.6] font-montserrat
             bg-gradient-to-r from-[#0A3772] to-[#875FD6] bg-clip-text text-transparent"
           >
-            Chọn đồ công nghệ? Có Techie lo!
-          </h1>
+            <span>{displayedText}</span>
+            <motion.span
+              animate={{ opacity: [1, 0, 1] }}
+              transition={{ duration: 1, repeat: Infinity }}
+              className="text-[#875FD6]"
+            >
+              |
+            </motion.span>
+          </motion.h1>
         ) : (
           <div className="list-msg-container w-full flex flex-col justify-start items-center gap-3 flex-[0.7] grow overflow-y-auto pb-[20px]">
             {listMessages.map((msg, index) => (

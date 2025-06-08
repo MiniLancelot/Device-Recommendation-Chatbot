@@ -34,14 +34,14 @@ const Home = () => {
   // const fakeBotMsg =
   //   "Sản phẩm này có ở cellphones.com.vn/iphone-16-pro-max.html và https://fptshop.com.vn/dien-thoai/iphone-16-pro-max.";
 
-  const commonPrompts = [
-    "Laptop cho lập trình viên",
-    "Điện thoại chơi game",
-    "Máy đọc sách giá dưới 15 triệu",
-    "iPhone 16 trên 30 triệu",
-    "Điện thoại dưới 10 triệu",
-    "iPhone mới nhất",
-  ];
+  // const commonPrompts = [
+  //   "Laptop cho lập trình viên",
+  //   "Điện thoại chơi game",
+  //   "Máy đọc sách giá dưới 15 triệu",
+  //   "iPhone 16 trên 30 triệu",
+  //   "Điện thoại dưới 10 triệu",
+  //   "iPhone mới nhất",
+  // ];
 
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
@@ -283,7 +283,7 @@ const Home = () => {
           )}
         </div>
 
-        {listMessages.length < 1 && (
+        {/* {listMessages.length < 1 && (
           <div className="common-prompts hidden lg:flex flex-wrap justify-center items-center gap-4 w-[50vw]">
             {commonPrompts.map((item, index) => (
               <CustomButton
@@ -297,7 +297,7 @@ const Home = () => {
               </CustomButton>
             ))}
           </div>
-        )}
+        )} */}
       </div>
     </>
   );

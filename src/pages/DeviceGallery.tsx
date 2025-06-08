@@ -8,7 +8,7 @@ import DeviceCard from "../components/Devices/DeviceCard";
 import Pagination from "../components/Devices/Pagination";
 import { DeviceBasicInfoProps } from "../types/DeviceBasicInfo";
 import { useState, useEffect } from "react";
-import { CaretDown } from "@phosphor-icons/react";
+import { CaretDown, X } from "@phosphor-icons/react";
 import HeroCarousel from "../components/common/Carousel/Carousel";
 
 interface DeviceResponse {
@@ -33,8 +33,11 @@ const DeviceGallery = () => {
   const [brandFilter, setBrandFilter] = useState("");
   const [searchParams, setSearchParams] = useSearchParams();
   const [brands, setBrands] = useState<Brand[]>([]);
+  const [needs, setNeeds] = useState<string[]>([]);
+  const [selectedNeeds, setSelectedNeeds] = useState<string[]>([]);
   const [isBrandDropdownOpen, setIsBrandDropdownOpen] = useState(false);
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
+  const [isNeedsDropdownOpen, setIsNeedsDropdownOpen] = useState(false);
   const categoryFromUrl = searchParams.get("category");
   const currentSort = searchParams.get("sort") || "";
   const [pageTitle, setPageTitle] = useState("Danh sách sản phẩm");
@@ -70,6 +73,36 @@ const DeviceGallery = () => {
 
     fetchBrands();
   }, [categoryFromUrl]);
+
+  useEffect(() => {
+    const fetchNeeds = async () => {
+      try {
+        const response = await fetch(
+          `http://127.0.0.1:8000/needs?category=${categoryFromUrl || ""}`
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setNeeds(data.needs || []);
+        }
+      } catch (error) {
+        console.error("Error fetching needs:", error);
+        setNeeds([]);
+      }
+    };
+
+    fetchNeeds();
+  }, [categoryFromUrl]);
+
+  useEffect(() => {
+    // Get selected needs from URL params
+    const needsParam = searchParams.get("needs");
+    if (needsParam) {
+      setSelectedNeeds(needsParam.split(","));
+    } else {
+      setSelectedNeeds([]);
+    }
+  }, [searchParams]);
+
   useEffect(() => {
     const selectedCategory = deviceCategories.find((item) =>
       item.path.includes(`category=${categoryFromUrl}`)
@@ -80,6 +113,20 @@ const DeviceGallery = () => {
 
     setPageTitle(newTitle);
   }, [categoryFromUrl, deviceCategories]);
+
+  // Add safety check for data after all hooks
+  if (!data || !data.devices) {
+    return (
+      <div className="container mx-auto pt-20 lg:py-30 text-slate-800 lg:px-[180px] px-8">
+        <div className="flex justify-center items-center py-20">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold mb-4">Không thể tải dữ liệu</h2>
+            <p className="text-gray-600">Vui lòng thử lại sau.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const handleFilterChange = (type: string, value: string) => {
     const newParams = new URLSearchParams(searchParams);
@@ -97,10 +144,45 @@ const DeviceGallery = () => {
     if (currentSort) {
       newParams.set("sort", currentSort);
     }
+    if (selectedNeeds.length > 0) {
+      newParams.set("needs", selectedNeeds.join(","));
+    }
     newParams.set("page", "1");
     setSearchParams(newParams);
     setCurrentPage(1);
     setIsBrandDropdownOpen(false);
+  };
+
+  const handleNeedsChange = (need: string) => {
+    const newSelectedNeeds = selectedNeeds.includes(need)
+      ? selectedNeeds.filter((n) => n !== need)
+      : [...selectedNeeds, need];
+
+    setSelectedNeeds(newSelectedNeeds);
+
+    const newParams = new URLSearchParams(searchParams);
+    if (newSelectedNeeds.length > 0) {
+      newParams.set("needs", newSelectedNeeds.join(","));
+    } else {
+      newParams.delete("needs");
+    }
+
+    if (categoryFromUrl) {
+      newParams.set("category", categoryFromUrl);
+    }
+    if (brandFilter) {
+      newParams.set("brand", brandFilter);
+    }
+    if (currentSort) {
+      newParams.set("sort", currentSort);
+    }
+    newParams.set("page", "1");
+    setSearchParams(newParams);
+    setCurrentPage(1);
+  };
+
+  const removeNeed = (needToRemove: string) => {
+    handleNeedsChange(needToRemove);
   };
 
   const handleSortChange = (value: string) => {
@@ -115,6 +197,9 @@ const DeviceGallery = () => {
     }
     if (brandFilter) {
       newParams.set("brand", brandFilter);
+    }
+    if (selectedNeeds.length > 0) {
+      newParams.set("needs", selectedNeeds.join(","));
     }
     newParams.set("page", "1");
     setSearchParams(newParams);
@@ -134,6 +219,9 @@ const DeviceGallery = () => {
     if (currentSort) {
       newParams.set("sort", currentSort);
     }
+    if (selectedNeeds.length > 0) {
+      newParams.set("needs", selectedNeeds.join(","));
+    }
     setSearchParams(newParams);
     setCurrentPage(page);
   };
@@ -141,19 +229,12 @@ const DeviceGallery = () => {
   return (
     <>
       <div className="container mx-auto pt-20 lg:py-30  text-slate-800 lg:px-[180px] px-8">
-      <HeroCarousel category={categoryFromUrl} />
-        <motion.h1
-          className="text-6xl font-bold  text-center py-[8px] mb-10"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          {pageTitle}
-        </motion.h1>
-        
+        <HeroCarousel category={categoryFromUrl} />
+
+
 
         <div className="mb-8 p-4 bg-white rounded-lg shadow-md">
-          <div className="flex gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <h2 className="text-xl font-semibold mb-4">Thương hiệu</h2>
               <div className="relative w-48">
@@ -161,10 +242,7 @@ const DeviceGallery = () => {
                   className="flex items-center justify-between w-full px-4 py-2 text-left bg-white border rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-blue"
                   onClick={() => setIsBrandDropdownOpen(!isBrandDropdownOpen)}
                 >
-                  <span>
-                    {brandFilter.charAt(0).toUpperCase() +
-                      brandFilter.slice(1) || "Tất cả"}
-                  </span>
+                  <span>{brandFilter || "Tất cả"}</span>
                   <CaretDown size={16} weight="bold" />
                 </button>
 
@@ -197,10 +275,7 @@ const DeviceGallery = () => {
                   className="flex items-center justify-between w-full px-4 py-2 text-left bg-white border rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-blue"
                   onClick={() => setIsSortDropdownOpen(!isSortDropdownOpen)}
                 >
-                  <span>
-                    {sortOptions.find((opt) => opt.value === currentSort)
-                      ?.label || "Mặc định"}
-                  </span>
+                  <span>{sortOptions.find((opt) => opt.value === currentSort)?.label || 'Mặc định'}</span>
                   <CaretDown size={16} weight="bold" />
                 </button>
 
@@ -219,7 +294,62 @@ const DeviceGallery = () => {
                 )}
               </div>
             </div>
+
+            <div>
+              <h2 className="text-xl font-semibold mb-4">Nhu cầu sử dụng</h2>
+              <div className="relative w-48">
+                <button
+                  className="flex items-center justify-between w-full px-4 py-2 text-left bg-white border rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-blue"
+                  onClick={() => setIsNeedsDropdownOpen(!isNeedsDropdownOpen)}
+                >
+                  <span>{selectedNeeds.length > 0 ? `${selectedNeeds.length} lựa chọn` : "Tất cả"}</span>
+                  <CaretDown size={16} weight="bold" />
+                </button>
+
+                {isNeedsDropdownOpen && (
+                  <div className="absolute z-50 w-full mt-1 bg-white border rounded-lg shadow-lg max-h-96 overflow-y-auto">
+                    {needs.map((need) => (
+                      <label
+                        key={need}
+                        className="flex items-center w-full px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selectedNeeds.includes(need)}
+                          onChange={() => handleNeedsChange(need)}
+                          className="mr-2"
+                        />
+                        <span>{need}</span>
+                      </label>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
+
+          {/* Selected needs tags */}
+          {selectedNeeds.length > 0 && (
+            <div className="mt-4">
+              <h3 className="text-sm font-medium mb-2">Nhu cầu đã chọn:</h3>
+              <div className="flex flex-wrap gap-2">
+                {selectedNeeds.map((need) => (
+                  <span
+                    key={need}
+                    className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800"
+                  >
+                    {need}
+                    <button
+                      onClick={() => removeNeed(need)}
+                      className="ml-2 hover:text-blue-600"
+                    >
+                      <X size={14} />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {navigation.state !== "idle" ? (

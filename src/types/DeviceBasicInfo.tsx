@@ -14,4 +14,5 @@ export type DeviceBasicInfoProps = {
   urls: {
     [key: string]: string;
   };
+  needs: string[];
 };

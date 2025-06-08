@@ -10,7 +10,7 @@ import { FaSquare } from "react-icons/fa6";
 import { useRef, useState } from "react";
 import "../styles/Home.css";
 import { askChatbot } from "../services/chatbotService";
-import CustomButton from "../components/common/Button/CustomButon";
+// import CustomButton from "../components/common/Button/CustomButon";
 import ChatMessage from "../components/Chat/ChatMessage";
 import Tooltip from "../components/common/Tooltip/CustomToolTip";
 
@@ -137,13 +137,13 @@ const Home = () => {
     }
   };
 
-  const handlePromptClick = (item: string) => {
-    setUserPrompt(item);
+  // const handlePromptClick = (item: string) => {
+  //   setUserPrompt(item);
 
-    setTimeout(() => {
-      textareaRef.current?.focus();
-    }, 0);
-  };
+  //   setTimeout(() => {
+  //     textareaRef.current?.focus();
+  //   }, 0);
+  // };
   return (
     <>
       <div

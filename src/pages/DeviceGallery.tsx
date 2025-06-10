@@ -225,7 +225,7 @@ const DeviceGallery = () => {
                   className="flex items-center justify-between w-full px-4 py-2 text-left bg-white border rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-blue"
                   onClick={() => setIsBrandDropdownOpen(!isBrandDropdownOpen)}
                 >
-                  <span>{brandFilter || "Tất cả"}</span>
+                  <span>{brandFilter ? brandFilter.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ') : "Tất cả"}</span>
                   <CaretDown size={16} weight="bold" />
                 </button>
 

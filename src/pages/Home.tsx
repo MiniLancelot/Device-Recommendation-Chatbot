@@ -21,7 +21,7 @@ const GridAnimation = () => {
   // Create small grid effect with fewer elements for performance
   const gridRows = 15;
   const gridCols = 25;
-  
+
   const gridItems = useMemo(() => {
     // Only animate every 2nd or 3rd element for performance
     const items = [];
@@ -31,9 +31,9 @@ const GridAnimation = () => {
         if ((row + col) % 3 === 0) {
           items.push({
             id: `${row}-${col}`,
-            delay: (row * 0.2) + (col * 0.04),
+            delay: row * 0.2 + col * 0.04,
             row,
-            col
+            col,
           });
         }
       }
@@ -53,9 +53,9 @@ const GridAnimation = () => {
               gridRow: row + 1,
             }}
             initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ 
+            animate={{
               opacity: [0, 0.7, 0],
-              scale: [0.5, 1.2, 0.5]
+              scale: [0.5, 1.2, 0.5],
             }}
             transition={{
               duration: 4,
@@ -220,7 +220,7 @@ const Home = () => {
   // };
   return (
     <>
-      <GridAnimation />
+      {listMessages.length < 1 && <GridAnimation />}
 
       <div
         className="chat-container flex flex-col justify-between lg:justify-center items-center h-[100vh] w-full

@@ -104,30 +104,31 @@ export const carouselData: Record<string, CarouselItem[]> = {
   "man-hinh": [
     {
       id: 1,
-      title: "LG UltraWide 4K - Trải nghiệm màn hình siêu rộng",
+      title: "AOC CQ27G2 - Mang đến trải nghiệm chiến game đỉnh cao",
       image:
-        "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=1200&h=600&fit=crop",
+        "https://www.wepc.com/wp-content/uploads/2021/02/aoccq27g2u-13.jpg",
       thumbnail:
-        "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=200&h=100&fit=crop",
-      buttonLink: "",
+        "https://www.wepc.com/wp-content/uploads/2021/02/aoccq27g2u-13.jpg",
+      buttonLink: "man-hinh-cong-gaming-aoc-cq27g2-27-inch",
     },
     {
       id: 2,
       title: "Samsung Odyssey G9 - Gaming monitor cong 49 inch",
       image:
-        "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=1200&h=600&fit=crop",
+        "https://genk.mediacdn.vn/139269124445442048/2023/7/10/samsung-odyssey-oled-g9-6-1688981404927780457242-1688983719252-16889837193841389400688.jpg",
       thumbnail:
-        "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=200&h=100&fit=crop",
-      buttonLink: "",
+        "https://genk.mediacdn.vn/139269124445442048/2023/7/10/samsung-odyssey-oled-g9-6-1688981404927780457242-1688983719252-16889837193841389400688.jpg",
+      buttonLink:
+        "man-hinh-gaming-samsung-odyssey-oled-g9-g93sd-ls49dg930sexxv-49-inch",
     },
     {
       id: 3,
       title: "Dell UltraSharp - Màn hình chuyên nghiệp cho thiết kế",
       image:
-        "https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=1200&h=600&fit=crop",
+        "https://cohotech.vn/wp-content/uploads/2024/01/Dell-Ultrasharp-U2724D-01.jpg",
       thumbnail:
-        "https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=200&h=100&fit=crop",
-      buttonLink: "",
+        "https://cohotech.vn/wp-content/uploads/2024/01/Dell-Ultrasharp-U2724D-01.jpg",
+      buttonLink: "man-hinh-cong-dell-ultrasharp-u3425we-120hz-34-inch",
     },
   ],
 
@@ -135,30 +136,30 @@ export const carouselData: Record<string, CarouselItem[]> = {
   "may-tinh-bang": [
     {
       id: 1,
-      title: "iPad Pro M2 - Sức mạnh máy tính trong tầm tay",
+      title: "iPad Pro M4 - Sức mạnh máy tính trong tầm tay",
       image:
         "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=1200&h=600&fit=crop",
       thumbnail:
         "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=200&h=100&fit=crop",
-      buttonLink: "",
+      buttonLink: "ipad-pro-m4-13-inch-2tb-5g",
     },
     {
       id: 2,
-      title: "Samsung Galaxy Tab S9 Ultra - Tablet Android cao cấp",
+      title: "Samsung Galaxy Tab S10 Ultra - Tablet Android cao cấp",
       image:
-        "https://images.unsplash.com/photo-1561154464-82e9adf32764?w=1200&h=600&fit=crop",
+        "https://www.digitaltrends.com/wp-content/uploads/2024/09/Galaxy-Tab-S10-Ultra-hands-on-Digital-Trends-1.jpg?resize=1200%2C630&p=1",
       thumbnail:
-        "https://images.unsplash.com/photo-1561154464-82e9adf32764?w=200&h=100&fit=crop",
-      buttonLink: "",
+        "https://www.digitaltrends.com/wp-content/uploads/2024/09/Galaxy-Tab-S10-Ultra-hands-on-Digital-Trends-1.jpg?resize=1200%2C630&p=1",
+      buttonLink: "may-tinh-bang-samsung-galaxy-tab-s10-ultra-5g",
     },
     {
       id: 3,
-      title: "Microsoft Surface Pro 9 - Laptop và tablet trong một",
+      title: "Xiaomi Pad 7 - Laptop và tablet trong một",
       image:
-        "https://images.unsplash.com/photo-1585792180666-f7347c490ee2?w=1200&h=600&fit=crop",
+        "https://fdn.gsmarena.com/imgroot/news/23/04/xiaomi-pad-6-series-announced/inline/-1200/gsmarena_010.jpg",
       thumbnail:
-        "https://images.unsplash.com/photo-1585792180666-f7347c490ee2?w=200&h=100&fit=crop",
-      buttonLink: "",
+        "https://fdn.gsmarena.com/imgroot/news/23/04/xiaomi-pad-6-series-announced/inline/-1200/gsmarena_010.jpg",
+      buttonLink: "may-tinh-bang-xiaomi-pad-7",
     },
   ],
 
@@ -166,30 +167,30 @@ export const carouselData: Record<string, CarouselItem[]> = {
   pc: [
     {
       id: 1,
-      title: "Gaming PC RTX 4090 - Sức mạnh gaming tối thượng",
+      title: "Gaming PC RTX 5090 - Sức mạnh gaming tối thượng",
       image:
         "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=1200&h=600&fit=crop",
       thumbnail:
         "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=200&h=100&fit=crop",
-      buttonLink: "",
+      buttonLink: "pc-cps-quantum-blaze-5090",
     },
     {
       id: 2,
-      title: "Workstation Intel Xeon - Hiệu năng cho chuyên gia",
+      title: "CPS Đồ Hoạ i7 14700KF - Hiệu năng cho chuyên gia",
       image:
         "https://images.unsplash.com/photo-1593640408182-31c70c8268f5?w=1200&h=600&fit=crop",
       thumbnail:
         "https://images.unsplash.com/photo-1593640408182-31c70c8268f5?w=200&h=100&fit=crop",
-      buttonLink: "",
+      buttonLink: "may-tinh-pc-cps-do-hoa-d08",
     },
     {
       id: 3,
-      title: "Mini PC Intel NUC - Nhỏ gọn, hiệu năng cao",
+      title: "Mini PC Asus NUC - Nhỏ gọn, hiệu năng cao",
       image:
         "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=1200&h=600&fit=crop",
       thumbnail:
         "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=200&h=100&fit=crop",
-      buttonLink: "",
+      buttonLink: "pc-mini-asus-nuc-14-essential-intel-core-n97",
     },
   ],
 };

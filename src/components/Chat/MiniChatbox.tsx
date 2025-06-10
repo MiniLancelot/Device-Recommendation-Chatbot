@@ -163,9 +163,9 @@ export default function MiniChatBox({ onClose }: { onClose?: () => void }) {
                 </span>
               </div>
             )}
-            <div ref={messagesEndRef} />
           </div>
         )}
+        <div ref={messagesEndRef} />
       </div>
 
       <div className="p-2 bg-primary-color rounded-lg">

@@ -7,7 +7,7 @@ import {
 } from "react-icons/bi";
 import { LuArrowUp } from "react-icons/lu";
 import { FaSquare } from "react-icons/fa6";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useMemo } from "react";
 import { motion } from "motion/react";
 import "../styles/Home.css";
 import { askChatbot } from "../services/chatbotService";
@@ -15,6 +15,61 @@ import { askChatbot } from "../services/chatbotService";
 import ChatMessage from "../components/Chat/ChatMessage";
 import Tooltip from "../components/common/Tooltip/CustomToolTip";
 import axios from "axios";
+
+// Optimized Grid Animation Component
+const GridAnimation = () => {
+  // Create small grid effect with fewer elements for performance
+  const gridRows = 15;
+  const gridCols = 25;
+  
+  const gridItems = useMemo(() => {
+    // Only animate every 2nd or 3rd element for performance
+    const items = [];
+    for (let row = 0; row < gridRows; row++) {
+      for (let col = 0; col < gridCols; col++) {
+        // Skip some elements to reduce load but maintain visual density
+        if ((row + col) % 3 === 0) {
+          items.push({
+            id: `${row}-${col}`,
+            delay: (row * 0.2) + (col * 0.04),
+            row,
+            col
+          });
+        }
+      }
+    }
+    return items;
+  }, [gridRows, gridCols]);
+
+  return (
+    <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+      <div className="grid-container-small">
+        {gridItems.map(({ id, delay, row, col }) => (
+          <motion.div
+            key={id}
+            className="grid-box-small"
+            style={{
+              gridColumn: col + 1,
+              gridRow: row + 1,
+            }}
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ 
+              opacity: [0, 0.7, 0],
+              scale: [0.5, 1.2, 0.5]
+            }}
+            transition={{
+              duration: 4,
+              repeat: Infinity,
+              delay,
+              ease: "easeInOut",
+              type: "tween",
+            }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
 
 const Home = () => {
   const [userPrompt, setUserPrompt] = useState<string>("");
@@ -165,6 +220,8 @@ const Home = () => {
   // };
   return (
     <>
+      <GridAnimation />
+
       <div
         className="chat-container flex flex-col justify-between lg:justify-center items-center h-[100vh] w-full
   pt-20 lg:pt-24 relative z-10"

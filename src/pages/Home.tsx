@@ -250,11 +250,10 @@ const Home = () => {
               <div key={index} className="w-[90vw] lg:w-[60vw]">
                 <div ref={messagesEndRef} />
                 <div
-                  className={`msg px-5 py-3 w-fit rounded-3xl whitespace-pre-wrap ${
-                    msg.sender === "user"
+                  className={`msg px-5 py-3 w-fit rounded-3xl whitespace-pre-wrap ${msg.sender === "user"
                       ? "ml-auto max-w-[40vw]"
                       : "bg-none w-full"
-                  }`}
+                    }`}
                   style={{
                     backgroundColor:
                       msg.sender === "user" ? "#dedede" : "transparent",
@@ -273,7 +272,7 @@ const Home = () => {
                             <BiCopy size={20} />
                           </Tooltip>
                         </button>
-
+                        {/* 
                         {(ratings[msg.id] === undefined ||
                           ratings[msg.id] === "like") && (
                           <button
@@ -291,7 +290,7 @@ const Home = () => {
                             )}
                           </button>
                         )}
-
+                        
                         {(ratings[msg.id] === undefined ||
                           ratings[msg.id] === "dislike") && (
                           <button
@@ -309,6 +308,7 @@ const Home = () => {
                             )}
                           </button>
                         )}
+                        */}
                       </div>
                     )}
                 </div>
@@ -347,11 +347,10 @@ const Home = () => {
                 handleSendMsg();
               }
             }}
-            placeholder={`${
-              listMessages.length < 1
+            placeholder={`${listMessages.length < 1
                 ? "Nhập câu hỏi của bạn...Ví dụ: Laptop dưới 20 triệu"
                 : ""
-            }`}
+              }`}
           />
           {botTyping ? (
             <div className="ml-auto">

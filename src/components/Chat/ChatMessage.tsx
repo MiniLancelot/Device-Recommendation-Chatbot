@@ -1,5 +1,6 @@
 import React from "react";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 interface ChatMessageProps {
   message: string;
@@ -47,6 +48,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
   return (
     <div className="leading-snug">
       <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
         components={{
           a: ({ href, children }) => {
             const brand = href ? getBrandFromUrl(href) : null;
@@ -61,6 +63,30 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
               </a>
             );
           },
+          table: ({ children }) => (
+            <div className="overflow-x-auto my-4">
+              <table className="min-w-full border-collapse border border-gray-300">
+                {children}
+              </table>
+            </div>
+          ),
+          thead: ({ children }) => (
+            <thead className="bg-gray-50">{children}</thead>
+          ),
+          tbody: ({ children }) => (
+            <tbody className="bg-white">{children}</tbody>
+          ),
+          tr: ({ children }) => (
+            <tr className="border-b border-gray-200">{children}</tr>
+          ),
+          th: ({ children }) => (
+            <th className="border border-gray-300 px-4 py-2 text-left font-semibold bg-gray-100">
+              {children}
+            </th>
+          ),
+          td: ({ children }) => (
+            <td className="border border-gray-300 px-4 py-2">{children}</td>
+          ),
         }}
       >
         {parsedMessage}

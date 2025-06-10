@@ -7,13 +7,13 @@ import {
 } from "react-icons/bi";
 import { LuArrowUp } from "react-icons/lu";
 import { FaSquare } from "react-icons/fa6";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
+import { motion } from "motion/react";
 import "../styles/Home.css";
 import { askChatbot } from "../services/chatbotService";
 // import CustomButton from "../components/common/Button/CustomButon";
 import ChatMessage from "../components/Chat/ChatMessage";
 import Tooltip from "../components/common/Tooltip/CustomToolTip";
-import { motion } from "framer-motion";
 import axios from "axios";
 
 const Home = () => {
@@ -34,18 +34,6 @@ const Home = () => {
   const [ratings, setRatings] = useState<{
     [key: number]: "like" | "dislike" | null;
   }>({});
-
-  // const fakeBotMsg =
-  //   "Sản phẩm này có ở cellphones.com.vn/iphone-16-pro-max.html và https://fptshop.com.vn/dien-thoai/iphone-16-pro-max.";
-
-  // const commonPrompts = [
-  //   "Laptop cho lập trình viên",
-  //   "Điện thoại chơi game",
-  //   "Máy đọc sách giá dưới 15 triệu",
-  //   "iPhone 16 trên 30 triệu",
-  //   "Điện thoại dưới 10 triệu",
-  //   "iPhone mới nhất",
-  // ];
 
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
@@ -178,18 +166,26 @@ const Home = () => {
   return (
     <>
       <div
-        className="chat-container flex flex-col justify-between lg:justify-center items-center bg-primary-color h-[100vh] w-full
-  pt-20 lg:pt-24"
+        className="chat-container flex flex-col justify-between lg:justify-center items-center h-[100vh] w-full
+  pt-20 lg:pt-24 relative z-10"
+        style={{ backgroundColor: "rgba(255, 255, 255, 0.85)" }}
       >
         {listMessages.length < 1 ? (
           <motion.h1
-            className="title w-fit p-6 mb-20 text-xl lg:text-5xl font-bold leading-[1.6] font-montserrat
-            bg-gradient-to-r from-[#0A3772] to-[#875FD6] bg-clip-text text-transparent"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: "easeInOut" }}
+            transition={{ duration: 0.5 }}
+            className="title w-fit p-6 mb-20 text-xl lg:text-5xl font-bold leading-[1.6] font-montserrat
+            bg-gradient-to-r from-[#0A3772] to-[#875FD6] bg-clip-text text-transparent"
           >
-            Chọn đồ công nghệ? Có Techie lo!
+            <span>Chọn đồ công nghệ? Có Techie lo!</span>
+            <motion.span
+              animate={{ opacity: [1, 0, 1] }}
+              transition={{ duration: 1, repeat: Infinity }}
+              className="text-[#875FD6]"
+            >
+              |
+            </motion.span>
           </motion.h1>
         ) : (
           <div className="list-msg-container w-full flex flex-col justify-start items-center gap-3 flex-[0.7] grow overflow-y-auto pb-[20px]">

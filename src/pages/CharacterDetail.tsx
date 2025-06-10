@@ -164,19 +164,27 @@ const DeviceDetail = () => {
               transition={{ delay: 0.3, duration: 0.5, type: "spring" }}
             >
               <motion.div
-                className="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-white overflow-hidden shadow-md"
+                className="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-white overflow-hidden shadow-md bg-gray-100"
                 whileHover={{ scale: 1.05, borderColor: "#ffeb3b" }}
                 transition={{ duration: 0.2 }}
               >
-                <img
-                  src={device.images[0]}
-                  alt={device.display_name}
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    e.currentTarget.src =
-                      "https://via.placeholder.com/150?text=Device";
-                  }}
-                />
+                {device.images && device.images.length > 0 ? (
+                  <img
+                    src={device.images[0]}
+                    alt={device.display_name}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.currentTarget.src =
+                        "https://via.placeholder.com/150?text=Device";
+                    }}
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-gray-500">
+                    <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                )}
               </motion.div>
             </motion.div>
             <motion.div
@@ -244,55 +252,77 @@ const DeviceDetail = () => {
               whileHover="hover"
             >
               <div className="relative aspect-square">
-                <img
-                  src={device.images[selectedImage]}
-                  alt={device.display_name}
-                  className="w-full h-full object-contain p-4"
-                />
-              </div>
-              <div className="p-4 grid grid-cols-5 gap-2">
-                {device.images.slice(0, 9).map((image, index) => (
-                  <motion.button
-                    key={index}
-                    className={`aspect-square rounded-lg overflow-hidden border-2 ${
-                      selectedImage === index
-                        ? "border-blue-500"
-                        : "border-gray-200"
-                    }`}
-                    onClick={() => setSelectedImage(index)}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <img
-                      src={image}
-                      alt={`${device.display_name} - ${index + 1}`}
-                      className="w-full h-full object-cover"
-                    />
-                  </motion.button>
-                ))}
-                {device.images.length > 9 && (
-                  <motion.button
-                    className="aspect-square rounded-lg overflow-hidden border-2 border-gray-200 relative"
-                    onClick={() => {
-                      setModalSelectedImage(0);
-                      setIsImageModalOpen(true);
+                {device.images && device.images.length > 0 ? (
+                  <img
+                    src={device.images[selectedImage]}
+                    alt={device.display_name}
+                    className="w-full h-full object-contain p-4"
+                    onError={(e) => {
+                      e.currentTarget.src = "https://via.placeholder.com/400x400?text=No+Image+Available";
                     }}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <img
-                      src={device.images[9]}
-                      alt={`${device.display_name} - more images`}
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 backdrop-blur-sm bg-white/40 flex items-center justify-center">
-                      <span className="text-gray-800 text-sm font-bold drop-shadow-sm">
-                        +{device.images.length - 9} more
-                      </span>
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                    <div className="text-center text-gray-500">
+                      <svg className="w-16 h-16 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      <p className="text-sm font-medium">No Image Available</p>
                     </div>
-                  </motion.button>
+                  </div>
                 )}
               </div>
+              {device.images && device.images.length > 0 && (
+                <div className="p-4 grid grid-cols-5 gap-2">
+                  {device.images.slice(0, 9).map((image, index) => (
+                    <motion.button
+                      key={index}
+                      className={`aspect-square rounded-lg overflow-hidden border-2 ${
+                        selectedImage === index
+                          ? "border-blue-500"
+                          : "border-gray-200"
+                      }`}
+                      onClick={() => setSelectedImage(index)}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <img
+                        src={image}
+                        alt={`${device.display_name} - ${index + 1}`}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.currentTarget.src = "https://via.placeholder.com/100x100?text=No+Image";
+                        }}
+                      />
+                    </motion.button>
+                  ))}
+                  {device.images.length > 9 && (
+                    <motion.button
+                      className="aspect-square rounded-lg overflow-hidden border-2 border-gray-200 relative"
+                      onClick={() => {
+                        setModalSelectedImage(0);
+                        setIsImageModalOpen(true);
+                      }}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <img
+                        src={device.images[9]}
+                        alt={`${device.display_name} - more images`}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.currentTarget.src = "https://via.placeholder.com/100x100?text=No+Image";
+                        }}
+                      />
+                      <div className="absolute inset-0 backdrop-blur-sm bg-white/40 flex items-center justify-center">
+                        <span className="text-gray-800 text-sm font-bold drop-shadow-sm">
+                          +{device.images.length - 9} more
+                        </span>
+                      </div>
+                    </motion.button>
+                  )}
+                </div>
+              )}
             </motion.div>
           </motion.div>
 
@@ -407,7 +437,7 @@ const DeviceDetail = () => {
 
       {/* Image Carousel Modal */}
       <AnimatePresence>
-        {isImageModalOpen && (
+        {isImageModalOpen && device.images && device.images.length > 0 && (
           <motion.div
             className="fixed inset-0 backdrop-blur-sm bg-black/50 z-50 flex items-center justify-center p-4"
             initial={{ opacity: 0 }}
@@ -440,6 +470,9 @@ const DeviceDetail = () => {
                   src={device.images[modalSelectedImage]}
                   alt={`${device.display_name} - ${modalSelectedImage + 1}`}
                   className="max-w-full max-h-full object-contain"
+                  onError={(e) => {
+                    e.currentTarget.src = "https://via.placeholder.com/600x600?text=No+Image+Available";
+                  }}
                 />
               </div>
 

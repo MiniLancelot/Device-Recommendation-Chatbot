@@ -40,14 +40,6 @@ const DeviceGallery = () => {
   const [isNeedsDropdownOpen, setIsNeedsDropdownOpen] = useState(false);
   const categoryFromUrl = searchParams.get("category");
   const currentSort = searchParams.get("sort") || "";
-  const [pageTitle, setPageTitle] = useState("Danh sách sản phẩm");
-  const deviceCategories = [
-    { name: "điện thoại", path: "/devices?category=dien-thoai" },
-    { name: "laptop", path: "/devices?category=laptop" },
-    { name: "màn hình", path: "/devices?category=man-hinh" },
-    { name: "máy tính bảng", path: "/devices?category=may-tinh-bang" },
-    { name: "máy tính để bàn", path: "/devices?category=pc" },
-  ];
 
   const sortOptions = [
     { label: "Mặc định", value: "" },
@@ -103,16 +95,7 @@ const DeviceGallery = () => {
     }
   }, [searchParams]);
 
-  useEffect(() => {
-    const selectedCategory = deviceCategories.find((item) =>
-      item.path.includes(`category=${categoryFromUrl}`)
-    );
-    const newTitle = selectedCategory
-      ? `Danh sách ${selectedCategory.name}`
-      : "Danh sách sản phẩm";
 
-    setPageTitle(newTitle);
-  }, [categoryFromUrl, deviceCategories]);
 
   // Add safety check for data after all hooks
   if (!data || !data.devices) {

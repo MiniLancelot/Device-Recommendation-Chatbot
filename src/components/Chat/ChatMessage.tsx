@@ -12,9 +12,11 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
     if (url.includes("fptshop.com.vn")) return "FPT Shop";
     return null;
   };
+
   const convertUrlsToMarkdownLinksSafely = (text: string): string => {
     // Xóa tất cả ký tự xuống dòng
     const cleanedText = text.replace(/\n{2,}/g, "\n");
+
     // Tách và xử lý markdown links
     const parts = cleanedText.split(/(\[.*?\]\(.*?\))/g);
 
@@ -23,9 +25,17 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
         if (part.match(/^\[.*?\]\(.*?\)$/)) {
           return part;
         } else {
+          // Regex để detect URLs:
+          // 1. Bắt đầu với https:// hoặc http://
+          // 2. Hoặc bắt đầu với domain (có .com, .vn, .net, etc.)
+          // 3. Kết thúc khi gặp space, quotes, hoặc ký tự đặc biệt
           return part.replace(
-            /https:\/\/[^\s)]+/g,
-            (url) => `[${url}](${url})`
+            /(https?:\/\/[^\s'"<>{}|\\^`\\[\]]+|(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(?:\/[^\s'"<>{}|\\^`\\[\]]*)?)/g,
+            (match) => {
+              // Nếu không bắt đầu với http/https thì thêm https://
+              const url = match.startsWith("http") ? match : `https://${match}`;
+              return `[${url}](${url})`;
+            }
           );
         }
       })

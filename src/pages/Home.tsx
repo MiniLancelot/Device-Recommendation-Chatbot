@@ -137,21 +137,8 @@ const Home = () => {
     abortControllerRef.current = controller;
 
     try {
-      // const botReply = await askChatbot(userPrompt, controller.signal);
-      const botReply = `
-**So sánh Samsung Galaxy A33 5G và Samsung Galaxy A9 Pro 2018**
+      const botReply = await askChatbot(userPrompt, controller.signal);
 
-| Tính năng             | Samsung Galaxy A33 5G                             | Samsung Galaxy A9 Pro 2018                  |
-|----------------------|---------------------------------------------------|---------------------------------------------|
-| **Giá**              | 7.290.000 VNĐ                                     | 2.890.000 - 2.990.000 VNĐ                   |
-| **Kích thước màn hình** | 6.4 inches                                       | 8.7 inches                                  |
-| **Tối ưu hóa**        | Màn hình Super AMOLED, Hồng ngoại                | Công nghệ màn hình Super AMOLED            |
-| **Camera**           | 4K@30fps, 1080p@30/120fps                         | FHD (1920 x 1080) @ 30fps                   |
-| **Đồ họa**           | Mali-G68                                          | Adreno 512                                  |
-| **Tính năng nổi bật** | - Hỗ trợ quay video 4K@30fps, 1080p@30/120fps<br>- Khe cắm thẻ nhớ MicroSD hỗ trợ 256GB      | - Màn hình Super AMOLED<br>- Pin 3800mAh    |
-
-**Tổng kết:**
-`;
       console.log("bot reply: ", botReply);
 
       let safeText: string;
@@ -265,8 +252,8 @@ const Home = () => {
                 <div ref={messagesEndRef} />
                 <div
                   className={`msg px-5 py-3 w-fit rounded-3xl whitespace-pre-wrap ${msg.sender === "user"
-                      ? "ml-auto max-w-[40vw]"
-                      : "bg-none w-full"
+                    ? "ml-auto max-w-[40vw]"
+                    : "bg-none w-full"
                     }`}
                   style={{
                     backgroundColor:
@@ -362,8 +349,8 @@ const Home = () => {
               }
             }}
             placeholder={`${listMessages.length < 1
-                ? "Nhập câu hỏi của bạn...Ví dụ: Laptop dưới 20 triệu"
-                : ""
+              ? "Nhập câu hỏi của bạn...Ví dụ: Laptop dưới 20 triệu"
+              : ""
               }`}
           />
           {botTyping ? (

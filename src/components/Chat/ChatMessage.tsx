@@ -14,11 +14,56 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
     return null;
   };
 
+  const fixMarkdownTableFormat = (text: string): string => {
+    const lines = text.split("\n");
+
+    const fixedLines: string[] = [];
+    let insideTable = false;
+    let buffer: string[] = [];
+
+    for (const line of lines) {
+      const isTableLine = /^\|.*\|$/.test(line.trim());
+
+      if (isTableLine) {
+        buffer.push(line.trim());
+        insideTable = true;
+      } else {
+        if (insideTable && buffer.length > 1) {
+          const fixedTable = fixTable(buffer);
+          fixedLines.push("", "*", ...fixedTable, "*", "");
+          buffer = [];
+          insideTable = false;
+        } else if (insideTable) {
+          fixedLines.push(...buffer, line);
+          buffer = [];
+          insideTable = false;
+        } else {
+          fixedLines.push(line);
+        }
+      }
+    }
+
+    if (insideTable && buffer.length > 1) {
+      const fixedTable = fixTable(buffer);
+      fixedLines.push("", "*", ...fixedTable, "*", "");
+    }
+
+    return fixedLines.join("\n");
+  };
+
+  const fixTable = (tableLines: string[]): string[] => {
+    const [header, ...rest] = tableLines;
+    if (rest.length && /^\|[-:\s|]+\|$/.test(rest[0])) {
+      return [header, ...rest];
+    }
+    const columns = header.split("|").filter((col) => col.trim() !== "");
+    const divider = "|" + columns.map(() => "---").join("|") + "|";
+    return [header, divider, ...rest];
+  };
+
   const convertUrlsToMarkdownLinksSafely = (text: string): string => {
-    // Xóa tất cả ký tự xuống dòng
     const cleanedText = text.replace(/\n{2,}/g, "\n");
 
-    // Tách và xử lý markdown links
     const parts = cleanedText.split(/(\[.*?\]\(.*?\))/g);
 
     return parts
@@ -26,14 +71,9 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
         if (part.match(/^\[.*?\]\(.*?\)$/)) {
           return part;
         } else {
-          // Regex để detect URLs:
-          // 1. Bắt đầu với https:// hoặc http://
-          // 2. Hoặc bắt đầu với domain (có .com, .vn, .net, etc.)
-          // 3. Kết thúc khi gặp space, quotes, hoặc ký tự đặc biệt
           return part.replace(
-            /(https?:\/\/[^\s'"<>{}|\\^`\\[\]]+|(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(?:\/[^\s'"<>{}|\\^`\\[\]]*)?)/g,
+            /(https?:\/\/[^\s'"<>{}|\\^`[\]]+|(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(?:\/[^\s'"<>{}|\\^`[\]]*)?)/g,
             (match) => {
-              // Nếu không bắt đầu với http/https thì thêm https://
               const url = match.startsWith("http") ? match : `https://${match}`;
               return `[${url}](${url})`;
             }
@@ -43,7 +83,9 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
       .join("");
   };
 
-  const parsedMessage = convertUrlsToMarkdownLinksSafely(message);
+  const parsedMessage = fixMarkdownTableFormat(
+    convertUrlsToMarkdownLinksSafely(message)
+  );
 
   return (
     <div className="leading-snug">

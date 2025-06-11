@@ -21,7 +21,7 @@ const Test = () => {
   };
 
   return (
-    <div>
+    <div className="flex flex-col items-center justify-center h-screen">
       <input
         type="text"
         placeholder="Username"
@@ -35,10 +35,12 @@ const Test = () => {
         value={email}
         onChange={(e) => handleChangeProfileState("email", e.target.value)}
       />
-
-      <HoverButton onClick={() => console.log("Button clicked!")}>
-        Click Me
-      </HoverButton>
+      <div
+      >
+        <HoverButton onClick={() => console.log("Button clicked!")}>
+          Click Me
+        </HoverButton>
+      </div>
     </div>
   );
 };

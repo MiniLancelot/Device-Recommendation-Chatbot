@@ -1,48 +1,75 @@
-// import axios from "axios";
-// import { baseUrl } from "../constants/baseUrl";
-
-// export const charactersLoader = async () => {
-//   try {
-//     const response = await axios.get(baseUrl);
-//     return response.data;
-//   } catch (error) {
-//     console.error("Error fetching characters:", error);
-//     throw error;
-//   }
-// };
-
-
 import { baseUrl } from "../constants/baseUrl";
 import axios from "axios";
 
-export const charactersLoader = async () => {
+export const devicesLoader = async ({ request }: { request: Request }) => {
   try {
-    const response = await axios.get(baseUrl);    
-    const characterNames = await response.data;
-    
-    const characterDetailsPromises = characterNames.map(async (name: string) => {
-      try {
-        const detailResponse = await axios.get(`${baseUrl}/${name}`);
-        if (detailResponse.status !== 200) {
-          return { name, weapon: "Unknown" };
-        }
-        const details = await detailResponse.data
+    const url = new URL(request.url);
+    const page = url.searchParams.get("page") || "1";
+    const brand = url.searchParams.get("brand") || "";
+    const category = url.searchParams.get("category") || "";
+    const sort = url.searchParams.get("sort") || "";
+    const needs = url.searchParams.get("needs") || "";
+
+    const response = await axios.get(
+      `${baseUrl}?page=${page}&page_size=20${brand ? `&brand=${brand}` : ""}${
+        category ? `&category=${category}` : ""
+      }${sort ? `&sort=${sort}` : ""}${needs ? `&needs=${needs}` : ""}`
+    );
+
+    // Check if response has the expected structure
+    if (response.data && typeof response.data === 'object') {
+      // If response has an error property, handle it
+      if (response.data.error) {
+        console.error("API Error:", response.data.error);
         return {
-          name,
-          characterName: details.name || "Unknown",
-          weapon: details.weapon || "Unknown",
-          vision: details.vision || "Unknown",
+          devices: [],
+          pagination: {
+            current_page: 1,
+            total_pages: 1,
+            total_items: 0,
+            page_size: 20
+          }
         };
-      } catch (error) {
-        console.error(`Error fetching details for ${name}:`, error);
-        return { name, weapon: "Unknown" };
       }
-    });
-    
-    const charactersWithDetails = await Promise.all(characterDetailsPromises);
-    return charactersWithDetails;
-    
+      
+      // Ensure devices array exists
+      if (!response.data.devices) {
+        response.data.devices = [];
+      }
+      
+      // Ensure pagination exists
+      if (!response.data.pagination) {
+        response.data.pagination = {
+          current_page: 1,
+          total_pages: 1,
+          total_items: 0,
+          page_size: 20
+        };
+      }
+      
+      return response.data;
+    }
+
+    // If response structure is unexpected, return default
+    return {
+      devices: [],
+      pagination: {
+        current_page: 1,
+        total_pages: 1,
+        total_items: 0,
+        page_size: 20
+      }
+    };
   } catch (error) {
-    console.error("Error in charactersLoader:", error);
+    console.error("Error in devicesLoader:", error);
+    return {
+      devices: [],
+      pagination: {
+        current_page: 1,
+        total_pages: 1,
+        total_items: 0,
+        page_size: 20
+      }
+    };
   }
 };
